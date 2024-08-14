@@ -1,0 +1,17 @@
+:root{
+    --textcolor: var(--theme-palette-color-3);
+    --background: var(--theme-palette-color-7);
+    --buttoncolor: var(--theme-palette-color-1);
+    --buttontext: var(--theme-palette-color-6);
+    --inverse: var(--theme-palette-color-4);
+    --akcent: var(--theme-palette-color-2);
+    --akcent2: var(--theme-palette-color-5);
+    --background1: var(--theme-palette-color-6);
+    --background2: var(--theme-palette-color-8);
+    --modal-background: rgba(0,0,0,0.4);
+    --bordercolor: var(--theme-palette-color-2);
+    --bordercolor2: var(--theme-palette-color-9);
+    --gray: #d3d3d3;
+
+}
+

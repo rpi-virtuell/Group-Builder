@@ -1,0 +1,573 @@
+.single-group_post .page-title {
+    background-image: linear-gradient(90deg, rgba(255, 255, 255, 0.76) 10%, rgba(162, 162, 162, 0) 80%);
+    padding-left: 10px;
+    margin-left: -10px;
+}
+.entry-card.card-content.group_post, .entry-card.card-content.pinwall_post {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(20px,1fr);
+}
+
+.attendees {
+    margin-top: 0px;
+    border-top: 4px solid #ddd;
+
+}
+.attendees-wrapper {
+    position: relative;
+}
+.single-group_post .attendees-wrapper {
+    position: relative;
+    z-index: 50;
+    max-width: 500px;
+    margin: -75px auto 20px;
+}
+@media screen and (max-width: 1200px) {
+    .single-group_post .attendees-wrapper {
+        position: relative;
+        z-index: 50;
+        margin-top: -22px;
+        margin-bottom: -52px;
+    }
+}
+.attendees-wrapper p{
+    color: var(--inverse);
+}
+.attendees-label {
+    color: var(--inverse);
+    text-align: center;
+}
+.group_post .attendees-wrapper {
+    margin-top: 10px;
+}
+
+
+.pinwall_post .attendees-label {
+    text-align: right;
+}
+.assoziated-groups {
+    list-style: none;
+}
+.assoziated-group-link a span {
+    background-color: var(--buttoncolor);
+    color: var(--inverse);
+    border-radius: 50%;
+    font-size: 32px;
+    height: fit-content;
+    width: fit-content;
+    padding: 2px;
+    margin-right: 7px;
+    margin-top: -5px;
+    margin-left: -3px;
+}
+.assoziated-group-link a:hover span {
+    border-radius: 50%;
+    font-size: 33px;
+    height: fit-content;
+    width: fit-content;
+    padding: 3px;
+    margin-top: -7px;
+    box-shadow: 2px 2px 5px 3px rgba(0,0,0,0.3);
+}
+
+.assoziated-groups a{
+    background-color: var(--buttoncolor);
+    color: var(--inverse);
+    border: none;
+    border-radius: 10px;
+    padding: 5px 10px;
+    cursor: pointer;
+    padding-left:0;
+
+}
+.assoziated-groups a:hover{
+    background-color: var(--inverse);
+    color: var(--buttoncolor)
+}
+.avatar-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    min-height: 50px;
+}
+.pinwall_post .avatar-list {
+    justify-content: right;
+}
+.avatar-wrapper {
+    display: inline-block;
+    margin-right: 5px;
+    position: relative;
+}
+
+.avatar-wrapper img {
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+}
+.avatar-wrapper img:hover {
+    border: 2px solid var(--buttoncolor);
+    scale: 1.3;
+}
+
+.avatar-wrapper:hover::after {
+    content: attr(title);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--background1, #dddddd);
+    color: var(--textcolor, #000000);
+    padding: 5px;
+    border-radius: 3px;
+    font-size: 12px;
+    white-space: nowrap;
+}
+.single-group_post .avatar-list a {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(-100px);
+    animation: dropIn 0.5s forwards;
+}
+
+.single-group_post .avatar-list a:nth-child(1) {
+    animation-delay: 0.2s;
+}
+
+.single-group_post .avatar-list a:nth-child(2) {
+    animation-delay: 0.4s;
+}
+
+.single-group_post .avatar-list a:nth-child(3) {
+    animation-delay: 0.6s;
+}
+
+@keyframes dropIn {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.show-interest,
+.create-group,
+.leave-group {
+    padding: 5px 10px;
+    background-color: var(--background1);
+    color: var(--inverse);
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.show-interest:hover,
+.create-group:hover,
+.leave-group:hover {
+    /*background-color: var(--buttoncolor);*/
+}
+
+
+/** Group Form **/
+.edit-group, .toggle-join-option, .generate-invite-link {
+    margin-top: 10px;
+    padding: 5px 10px;
+    background-color: var(--gray);
+    color: var(--inverse);
+    border: none;
+    cursor: pointer;
+}
+
+.edit-group:hover, .toggle-join-option:hover, .generate-invite-link:hover {
+    background-color: var(--akcent);
+}
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 99;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: var(--modal-background);
+}
+
+.modal-content {
+    background-color: var(--background1);
+    margin: 15% auto;
+    padding: 20px;
+    border: var(--buttoncolor);
+    width: 80%;
+    max-width: 780px;
+    box-shadow: 3px 3px 5px rgba(0,0,0,0.3);
+    border-radius: 5px;
+}
+
+.modal-close {
+    color: var(--textcolor);
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.modal-close:hover,
+.modal-close:focus {
+    color: var(--akcent);
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* Form Styles */
+.edit-group-form,
+.edit-comment-form {
+    margin-top: 20px;
+}
+
+.edit-group-form input[type="text"],
+.edit-group-form textarea,
+.edit-comment-form textarea {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+}
+
+.edit-group-form input[type="submit"],
+.edit-comment-form button[type="submit"] {
+    background-color: var(--buttoncolor);
+    color: var(--inverse);
+    padding: 10px 15px;
+    border: none;
+    cursor: pointer;
+}
+
+.edit-group-form input[type="submit"]:hover,
+.edit-comment-form button[type="submit"]:hover {
+    background-color: var(--akcent);
+}
+
+/* Button Styles */
+.edit-group,
+.toggle-join-option,
+.generate-invite-link,
+.edit-comment {
+    margin-top: 10px;
+    padding: 5px 10px;
+    background-color: var(--buttoncolor);
+    color: var(--inverse);
+    border: none;
+    cursor: pointer;
+}
+
+.edit-group:hover,
+.toggle-join-option:hover,
+.generate-invite-link:hover,
+.edit-comment:hover {
+    background-color: var(--akcent);
+}
+.edit-button-wrapper {
+    display: inline;
+    justify-content: right;
+    position: relative;
+}
+.edit-button-wrapper button{
+    /*position: absolute;
+    top:20px*/
+}
+/* Invite Link Styles */
+#invite-link-modal input[type="text"] {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+}
+
+.copy-link {
+    background-color: var(--buttoncolor);
+    color: var(--background2);
+    padding: 5px 10px;
+    border: none;
+    cursor: pointer;
+}
+
+.copy-link:hover {
+    background-color: var(--akcent);
+}
+
+/** Editor styles **/
+.edit-thumbnail div.image-wrap {
+    max-width: 100%!important;
+    max-height: 200px;
+    overflow: hidden;
+    width: 100%;
+}
+.edit-thumbnail div.image-wrap img{
+    max-width: 100%!important;
+    max-height: unset!important;
+    width: 100%;
+}
+
+/** Action Buttons **/
+
+.group-builder-button-container {
+    overflow: hidden;
+    border-radius: 25px;
+    transition: width 0.3s ease;
+    width: 45px; /* Anfangsbreite */
+    text-align: center;
+    display: flex;
+    justify-content: left;
+    position: relative;
+
+}
+.group-builder-create-button-container {
+    position: absolute;
+    top: 2px;
+}
+.group-builder-create-button-container button {
+    background-color: var(--buttoncolor);
+}
+.group-builder-button-container:hover {
+    width: auto; /* Breite bei Hover */
+    position: absolute;
+}
+.group-builder-button-container button {
+    padding: 8px 11px;
+    border: none;
+    background-color: var(--gray);
+    color: var(--inverse);
+    border-radius: 25px;
+    cursor: pointer;
+    white-space: nowrap;
+    align-items: center;
+    justify-content: center;
+}
+.group-builder-button-container button svg {
+    top: 9px;
+    position: absolute;
+}
+.group-builder-button-container button span {
+    margin-left: 30px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+.group-builder-button-container:hover button span {
+    opacity: 1;
+}
+.group-builder-join-button-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+}
+.group-builder-join-button-container button{
+    grid-column: 2;
+    background-color: var(--buttoncolor);
+    color: var(--background2);
+    padding: 5px 20px 7px;
+    border-radius: 3px;
+}
+
+.group-builder-join-button-container button:hover {
+    background-color: var(--akcent);
+}
+div.clearfix {
+    clear: both;
+    width: 100%;
+    display: block;
+}
+
+/** Toggle-join design für die Beitrittsoption von Gruppen **/
+.toggle-join-option {
+    padding: 5px 10px;
+    background-color: var(--buttoncolor);
+    color: var(--inverse);
+    border: none;
+    cursor: pointer;
+    border-radius: 3px;
+}
+
+.toggle-join-option:hover::after {
+    content: attr(title);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--buttoncolor, #dddddd);
+    color: var(--inverse, #000000);
+    padding: 5px 20px;
+    border-radius: 3px;
+    max-width: 300px;
+    font-size: 15px;
+    /*white-space: nowrap;*/
+}
+.copy-invite-link-wrapper, .leave-btn-wrapper {
+    display: grid;
+    grid-template-columns: auto 200px;
+    border: 1px solid var(--akcent);
+    border-radius: 3px;
+    padding: 5px;
+}
+.leave-btn-wrapper {
+    margin-top: 10px;
+    border-color: var(--gray);
+}
+.leave-btn-wrapper span {
+    padding: 5px;
+}
+.leave-btn-wrapper button:hover {
+    background-color: var(--akcent);
+    color: var(--background2);
+}
+.copy-invite-link-label {
+    padding: 5px;
+}
+
+
+
+/** Adminbar **/
+
+.custom-modal, .custom-mega-menu {
+    z-index: 99!important;
+}
+.custom-modal-close, .custom-mega-menu-close {
+    color: var(--textcolor)!important;
+}
+.custom-modal-close:hover, .custom-modal-close:focus,
+.custom-mega-menu-close:hover, .custom-mega-menu-close:focus {
+    color: var(--buttoncolor)!important;
+}
+.custom-modal-content, .custom-mega-menu-content {
+    background-color: var(--background)!important;
+    color: var(--textcolor)!important;
+    border: 3px solid var(--textcolor) !important;
+}
+.custom-modal-content > div, .custom-mega-menu-content > div {
+    overflow: auto;
+    max-height: calc(100vh - 50px);
+}
+#wpadminbar #wp-admin-bar-my-account.with-avatar #wp-admin-bar-user-actions > li {
+    margin-left: 20px;
+}
+#wp-admin-bar-root-default .custom a.ab-item {
+    color: var(--akcent);
+}
+/*schrift in der mobilen adminbar sichtbar machen */
+@media screen and (max-width: 782px) {
+    #wpadminbar .ab-label {
+        border: 0;
+        clip: unset;
+        clip-path: unset;
+        height: unset;
+        margin: -1px;
+        overflow: hidden;
+        padding: 0;
+        position: absolute;
+        width: 200px;
+        word-wrap: normal !important;
+    }
+
+}
+/** Formularfelder in modals**/
+.custom-modal .acf-field[data-name="group_title"] input {
+    font-size: 30px;
+    font-weight: bold;
+}
+.custom-modal .acf-field[data-name="group_exerpt"] textarea {
+    font-size: 20px;
+    font-weight: bold;
+    height: 80px;
+}
+.custom-modal .acf-fields > .acf-field {
+    border-top: 0;
+}
+.custom-modal .acf-label{
+    font-size: 12px!important;
+    color: #444;
+}
+.custom-modal .acf-label label{
+    font-size: 16px!important;
+    color: #444;
+}
+/** Comments **/
+
+.single-group_post article > .ct-comments {
+    margin-top: 30px;
+    padding-top:0px;
+}
+.ct-comments-title, #reply-title {
+    display: none;
+}
+.ct-comment-inner {
+    padding-block: 10px;
+    position: relative;
+}
+.ct-comment-inner .cld-prevent{
+    color: var(--buttoncolor);
+}
+.ct-comment-meta{
+    background: rgba(22, 127, 168, 0.15);
+    border-radius: 25px 0 0 0;
+
+}
+.cld-like-dislike-wrap {
+    position: absolute;
+    left: 15px;
+    top: 61px;
+}
+.cld-count-wrap {
+    margin-left: 5px;
+    font-weight: bold;
+}
+
+
+/** FEP Notificationbar **/
+#fep-notification-bar {
+    background-color: var(--akcent);
+    border-radius: 5px;
+    border: 1px solid var(--inverse);
+    box-sizing: border-box;
+    color: var(--inverse);
+    font-size: 15px;
+    font-weight: bold;
+    padding: 12px;
+    position: relative;
+    text-align: center;
+    width: 100%;
+    z-index: 999999;
+}
+#fep-notification-bar a {
+    color: var(--buttontext)!important;
+    text-decoration: underline;
+}
+#fep-notification-bar button{
+    margin-top: -10px;
+}
+
+/** HEADER MENU **/
+a.ct-menu-link {
+    background-position: center center;
+}
+#offcanvas a.ct-menu-link {
+    /*background-position: center left!important;*/
+}
+@media screen and (max-width: 782px) {
+    li.menu-item:hover, li.menu-item:hover:active {
+        background-color: var(--menu-indicator-hover-color, var(--theme-palette-color-2))
+    }
+}
+
+/** Realtime Comment Notification Button **/
+
+#realtime-comment-notification {
+    width: 100%;
+    display: grid;
+    background-color: var(--buttontext);
+    color: var(--background2);
+    padding: 5px;
+    border-radius: 3px;
+    border: 1px solid var(--buttoncolor);
+    animation:slide 3s ease-in-out infinite alternate;
+    background-image: linear-gradient(-60deg,  var(--background2) 50%, var(--akcent));
+
+}
