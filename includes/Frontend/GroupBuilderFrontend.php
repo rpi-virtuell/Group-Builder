@@ -107,9 +107,8 @@ class GroupBuilderFrontend {
         }
         $create_button = '';
         $button_template = '<div class="group-builder-button-container">
-                                <button class="%s" data-post-id="%d">
+                                <button class="%s" data-post-id="%d" title="%s">
                                     %s
-                                    <span>%s</span>
                                 </button>
                             </div>';
 
@@ -125,15 +124,14 @@ class GroupBuilderFrontend {
             if (!is_array($interested_users)) {
                 $interested_users = array();
             }
-
             if (in_array($current_user_id, $interested_users)) {
-                $buttons .= sprintf($button_template, 'withdraw-interest', $post_id,$leave_svg, 'Mein Interesse zurückziehen');
+                $buttons .= sprintf($button_template, 'withdraw-interest', $post_id, 'Mein Interesse zurückziehen', $leave_svg,);
 
                 if (count($interested_users) >= 2) {
                     $create_button = sprintf($button2_template, 'create-group', $post_id, 'Gruppe gründen');
                 }
             } else {
-                $buttons .= sprintf($button_template, 'show-interest', $post_id,$join_svg, 'Interesse zeigen');
+                $buttons .= sprintf($button_template, 'show-interest', $post_id, 'Interesse zeigen', $join_svg,);
             }
         } elseif ($group_id) {
             $members = get_post_meta($group_id, '_group_members', true);
@@ -142,13 +140,13 @@ class GroupBuilderFrontend {
             }
             if(get_option('group_builder_avatar_actions')) {
                 if (in_array($current_user_id, $members)) {
-                    $buttons .= sprintf($button_template, 'leave-group', $group_id,$leave_svg, 'Gruppe verlassen');
+                    $buttons .= sprintf($button_template, 'leave-group', $group_id, 'Gruppe verlassen',$leave_svg);
                 } else {
-                    $buttons .= sprintf($button_template, 'join-group', $group_id,$join_svg, 'Gruppe beitreten');
+                    $buttons .= sprintf($button_template, 'join-group', $group_id, 'Gruppe beitreten',$join_svg);
                 }
             }
             if(!in_array($current_user_id, $members) && count($members) < get_option('group_builder_max_members',4)){
-                $buttons .= sprintf($button_template, 'join-group', $group_id,$join_svg, 'Gruppe beitreten');
+                $buttons .= sprintf($button_template, 'join-group', $group_id, 'Gruppe beitreten',$join_svg);
             }
         }
 

@@ -6,6 +6,7 @@ use GroupBuilder\Frontend\GroupBuilderFrontend;
 use GroupBuilder\Integrations\GroupBuilderIntegrations;
 use GroupBuilder\Admin\GroupBuilderAdmin;
 use GroupBuilder\Traits\GroupBuilderHelperTrait;
+use GroupBuilder\Color\GroupBuilderColor;
 
 class GroupBuilderCore {
     use GroupBuilderHelperTrait;
@@ -29,6 +30,7 @@ class GroupBuilderCore {
         new GroupBuilderFrontend();
         new GroupBuilderIntegrations();
         new GroupBuilderAdmin();
+        new GroupBuilderColor();
     }
 
     private function setup_actions() {

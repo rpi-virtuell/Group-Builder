@@ -101,14 +101,17 @@
     position: relative;
 }
 
-.avatar-wrapper img {
+.avatar-wrapper img, .group-builder-button-container svg{
     border-radius: 50%;
     width: 50px;
     height: 50px;
-}
-.avatar-wrapper img:hover {
     border: 2px solid var(--buttoncolor);
-    scale: 1.3;
+    box-shadow: 2px 3px 6px rgb(50, 50, 50);
+}
+
+.avatar-wrapper img:hover, .group-builder-button-container svg:hover {
+    border: 2px solid var(--buttoncolor);
+    scale: 1.1;
 }
 
 .avatar-wrapper:hover::after {
@@ -153,18 +156,13 @@
 .show-interest,
 .create-group,
 .leave-group {
-    padding: 5px 10px;
-    background-color: var(--background1);
-    color: var(--inverse);
-    border: none;
-    border-radius: 3px;
     cursor: pointer;
 }
 
 .show-interest:hover,
 .create-group:hover,
 .leave-group:hover {
-    /*background-color: var(--buttoncolor);*/
+    background-color: var(--buttoncolor);
 }
 
 
@@ -273,10 +271,7 @@
     justify-content: right;
     position: relative;
 }
-.edit-button-wrapper button{
-    /*position: absolute;
-    top:20px*/
-}
+
 /* Invite Link Styles */
 #invite-link-modal input[type="text"] {
     width: 100%;
@@ -311,65 +306,27 @@
 
 /** Action Buttons **/
 
-.group-builder-button-container {
-    overflow: hidden;
+.group-builder-button-container button:hover::after {
+    content: attr(title);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--background2, #dddddd);
+    /*color: var(--inverse, #000000);*/
+    padding: 5px 20px;
+    border-radius: 3px;
+    max-width: 300px;
+    font-size: 15px;
+}
+.group-builder-button-container, .group-builder-button-container button {
+
     border-radius: 25px;
-    transition: width 0.3s ease;
-    width: 45px; /* Anfangsbreite */
-    text-align: center;
-    display: flex;
-    justify-content: left;
+    height: 49px;
     position: relative;
 
-}
-.group-builder-create-button-container {
-    position: absolute;
-    top: 2px;
-}
-.group-builder-create-button-container button {
-    background-color: var(--buttoncolor);
-}
-.group-builder-button-container:hover {
-    width: auto; /* Breite bei Hover */
-    position: absolute;
-}
-.group-builder-button-container button {
-    padding: 8px 11px;
-    border: none;
-    background-color: var(--gray);
-    color: var(--inverse);
-    border-radius: 25px;
-    cursor: pointer;
-    white-space: nowrap;
-    align-items: center;
-    justify-content: center;
-}
-.group-builder-button-container button svg {
-    top: 9px;
-    position: absolute;
-}
-.group-builder-button-container button span {
-    margin-left: 30px;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-.group-builder-button-container:hover button span {
-    opacity: 1;
-}
-.group-builder-join-button-container {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-}
-.group-builder-join-button-container button{
-    grid-column: 2;
-    background-color: var(--buttoncolor);
-    color: var(--background2);
-    padding: 5px 20px 7px;
-    border-radius: 3px;
-}
 
-.group-builder-join-button-container button:hover {
-    background-color: var(--akcent);
+
 }
 div.clearfix {
     clear: both;
