@@ -169,12 +169,13 @@ class GroupBuilderFrontend {
         #$adminbar->add('top-secondary', '', '#', ' ');
         $adminbar->add('user-actions', 'Profil ansehen', '/user/', 'dashicons-admin-users');
         $adminbar->add('user-actions', 'Profil bearbeiten', '/user?um_action=edit', 'dashicons-edit');
-        $adminbar->add('user-actions', 'Meine Gruppen', '/user/wpadmin/?profiletab=group-builder', 'dashicons-admin-groups');
+        $adminbar->add('user-actions', 'Meine Gruppen', '/user/wpadmin/?profiletab=group-builder', 'dashicons-groups');
         $adminbar->add('user-actions', 'Nachricht schreiben', '/account/fep-um/', 'dashicons-email-alt');
 
         $adminbar->add('user-actions', 'Konto Einstellungen', '/account/', 'dashicons-admin-settings');
         $adminbar->add('user-actions', 'Abmelden', wp_logout_url(), 'dashicons-exit');
         $parent = '';
+
         $parent_home = $adminbar->add('', get_bloginfo('name'), home_url(), 'dashicons-admin-home');
         if (is_user_logged_in()) {
             $adminbar->add($parent_home, 'Leute', '/netwerk/');
@@ -196,9 +197,16 @@ class GroupBuilderFrontend {
             <h3>Gruppe konfigurieren</h3></div>';
             $group_tools_content = '';
             if ($this->group_builder_user_can(get_the_ID(), 'edit')) {
-                $adminbar->addMegaMenu($parent, 'Gruppe konfigurieren', 'group-edit-modal', 'dashicons-edit');
-                $adminbar->addMegaMenu($parent, 'Lernwerkzeuge konfigurieren', 'group_tools', 'dashicons-admin-generic');
-                $adminbar->addMegaMenuContent('group_tools', '<div><h3>Lernwerkzeuge konfigurieren</h3></div>');
+                if(get_query_var('group-space') ) {
+                    $adminbar->addMegaMenu($parent, 'Lernwerkzeuge konfigurieren', 'group_tools', 'dashicons-admin-generic');
+                    $adminbar->addMegaMenuContent('group_tools', '<div><h3>Lernwerkzeuge konfigurieren</h3></div>');
+                    $adminbar->add($parent, 'Zur Gruppe', '?', 'dashicons-exit');
+                }else{
+                    $adminbar->addMegaMenu($parent, 'Gruppe konfigurieren', 'group-edit-modal', 'dashicons-edit');
+                    $adminbar->add($parent, 'Lernraum', '?group-space=1', 'dashicons-welcome-learn-more');
+
+                }
+
             }
             $this->display_modal_frame();
         }
