@@ -11,8 +11,38 @@ class GroupBuilderIntegrations {
         add_filter('um_user_profile_tabs', [$this, 'ultimate_member_integration_tab'], 1000);
         add_action('um_profile_content_group-builder', [$this, 'ultimate_member_integration_content']);
         add_filter('um_profile_query_make_posts', [$this, 'ultimate_member_integration_profile_query_make_posts'], 10, 1);
+        add_action( 'um_members_after_user_name', [$this, 'ultimate_member_meta'], 10 );
     }
 
+    /**
+     * @param $user_id
+     * @return void
+     * Display the user meta data in the members list
+     * @todo select set meta_keys to display in optionspage
+     */
+    public function ultimate_member_meta($user_id) {
+        echo '<div class="um_member_meta">';
+        $bio = get_user_meta( $user_id, 'description', true );
+        if(!empty($bio)) {
+            $bio = wp_trim_words($bio, 8, "...").". ";
+            echo $bio;
+        }
+        $meta_keys = get_option('use_um_meta_keys',['schulform']);
+        foreach ($meta_keys as $meta_key) {
+            $meta_value = get_user_meta( $user_id, $meta_key, true );
+            if(is_array($meta_value)) {
+                $output = implode(', ', $meta_value);
+            }else{
+                $output = $meta_value;
+            }
+
+            if(!empty($meta_value)) {
+                echo '<div class="um_member_meta_'.$meta_key.'">'.$output.'</div>';
+            }
+        }
+        echo '</div>';
+
+    }
     public function ultimate_member_integration_tab($tabs) {
         $tabs['group-builder'] = array(
             'name' => 'Gruppen',
@@ -39,10 +69,10 @@ class GroupBuilderIntegrations {
             )
         );
         $groups = get_posts($args);
-        echo '<h3>Mitglied in folgenden Gruppen</h3>';
-        echo '<ul>';
+        echo '<ul class="group-list">';
         foreach ($groups as $group) {
-            echo '<li><a href="' . get_permalink($group->ID) . '">' . $group->post_title . '</a></li>';
+            echo
+            '<li class="assoziated-group-link"><a href="'.get_permalink($group->ID).'"><span class="dashicons dashicons-groups"></span>'.$group->post_title.'</a></li>';
         }
         echo '</ul>';
     }

@@ -166,7 +166,7 @@ class GroupBuilderFrontend {
         $adminbar->remove('user-info');
 
         $adminbar->edit('my-account', null, '/user/');
-        $adminbar->add('top-secondary', '', '#', ' ');
+        #$adminbar->add('top-secondary', '', '#', ' ');
         $adminbar->add('user-actions', 'Profil ansehen', '/user/', 'dashicons-admin-users');
         $adminbar->add('user-actions', 'Profil bearbeiten', '/user?um_action=edit', 'dashicons-edit');
         $adminbar->add('user-actions', 'Meine Gruppen', '/user/wpadmin/?profiletab=group-builder', 'dashicons-admin-groups');
@@ -182,11 +182,12 @@ class GroupBuilderFrontend {
             $adminbar->add('', 'Pinwand Karte', '/pinwand-karte-erstellen/', 'dashicons-plus');
         }
         if (is_singular('pinwall_post') && is_user_logged_in()) {
-            if (current_user_can('edit_post', get_the_ID())) {
-                $adminbar->addModal('', 'Bearbeiten', 'edit_pinwall_post', 'dashicons-edit');
-                $adminbar->addModalContent('edit_pinwall_post',
-                    '<div><h3>Pinwand Karte bearbeiten</h3>' . do_shortcode('[acfe_form name="edit_pinwall_post"]') . '</div>',
-                    'full');
+            if ($this->group_builder_user_can( get_the_ID(), 'edit')) {
+                $adminbar->addMegaMenu('', 'Bearbeiten', 'pin-edit-modal', 'dashicons-edit');
+//                $adminbar->addMegaMenuContent('edit_pinwall_post',
+//                    '<div><h3>Pinwand Karte bearbeiten</h3>' . do_shortcode('[acfe_form name="edit_pinwall_post"]') . '</div>',
+//                    'full');
+                $this->display_modal_frame();
             }
         }
 
@@ -250,10 +251,10 @@ class GroupBuilderFrontend {
             </div>
             <?php
         }
-        elseif (is_singular('pinwall_post') && current_user_can('edit_post', get_the_ID())) {
+        elseif (is_singular('pinwall_post') && $this->group_builder_user_can( get_the_ID(), 'edit')) {
             ?>
             <!-- Pinwall Modal -->
-            <div id="group-edit-modal" class="custom-modal" style="display: none;">
+            <div id="pin-edit-modal" class="custom-modal" style="display: none;">
                 <div class="custom-modal-content">
                     <span class="custom-modal-close">&times;</span>
                     <h2>Pinwand Karte bearbeiten</h2>

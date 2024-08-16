@@ -49,11 +49,12 @@ trait GroupBuilderHelperTrait {
             $group_section = '';
             if(is_array($assoziated_group_ids) && !empty($assoziated_group_ids)){
                 $has_groups = true;
-                $group_section .= '<div class="assoziated-groups"><p class="assoziated-groups-label">Unsere Gruppe arbeiten bereits dazu:</p>';
+                $group_section .= '<div class="assoziated-groups"><p class="assoziated-groups-label">Diese Gruppe arbeiten bereits dazu:</p>';
+                $group_section .= '<ul class="group-list">';
                 foreach($assoziated_group_ids as $assoziated_group_id){
                     $group_section .= '<li class="assoziated-group-link"><a href="'.get_permalink($assoziated_group_id).'"><span class="dashicons dashicons-groups"></span>'.get_the_title($assoziated_group_id).'</a></li>';
                 }
-                $group_section .= '</div>';
+                $group_section .= '</ul></div>';
             } else {
                 $assoziated_group_ids = false;
             }
@@ -162,16 +163,23 @@ trait GroupBuilderHelperTrait {
         return [$buttons, $create_button];
     }
 
-    public function group_builder_user_can($group_id, $action = 'edit') {
+    public function group_builder_user_can($post_id, $action = 'edit') {
+        if(is_singular('pinwall_post')){
+            $post=get_post($post_id);
+            if($post->post_author == get_current_user_id()){
+                return true;
+            }
+            return false;
+        }
         $current_user_id = get_current_user_id();
-        $group_members = get_post_meta($group_id, '_group_members', true);
+        $group_members = get_post_meta($post_id, '_group_members', true);
 
         if ($action === 'join') {
             if (is_array($group_members) && in_array($current_user_id, $group_members)) {
                 return false;
             }
-            $join_option = get_post_meta($group_id, '_join_option', true);
-            $hash = get_post_meta($group_id, '_invite_hash', true);
+            $join_option = get_post_meta($post_id, '_join_option', true);
+            $hash = get_post_meta($post_id, '_invite_hash', true);
             return !$join_option || (isset($_GET['invite']) && $hash === $_GET['invite']);
         }
 

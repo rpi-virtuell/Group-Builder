@@ -46,45 +46,55 @@
 .pinwall_post .attendees-label {
     text-align: right;
 }
+.group-list {
+    list-style: none;
+    margin-bottom: 20px!important;
+    margin-left: -25px;
+}
+
 .assoziated-groups {
     list-style: none;
 }
+.assoziated-group-link {
+    margin-left: -10px;
+    min-height: 30px;
+}
 .assoziated-group-link a span {
     background-color: var(--buttoncolor);
-    color: var(--inverse);
+    color: var(--background);
     border-radius: 50%;
-    font-size: 32px;
+    font-size: 24px;
     height: fit-content;
     width: fit-content;
     padding: 2px;
     margin-right: 7px;
-    margin-top: -5px;
-    margin-left: -3px;
+    /*margin-top: -5px;*/
+    /*margin-left: -3px;*/
 }
 .assoziated-group-link a:hover span {
     border-radius: 50%;
-    font-size: 33px;
+    font-size: 25px;
     height: fit-content;
     width: fit-content;
     padding: 3px;
-    margin-top: -7px;
+    /*margin-top: -7px;*/
     box-shadow: 2px 2px 5px 3px rgba(0,0,0,0.3);
 }
 
-.assoziated-groups a{
-    background-color: var(--buttoncolor);
-    color: var(--inverse);
-    border: none;
-    border-radius: 10px;
-    padding: 5px 10px;
-    cursor: pointer;
-    padding-left:0;
+/*.assoziated-groups a{*/
+/*    background-color: var(--buttoncolor);*/
+/*    color: var(--inverse);*/
+/*    border: none;*/
+/*    border-radius: 10px;*/
+/*    padding: 5px 10px;*/
+/*    cursor: pointer;*/
+/*    padding-left:0;*/
 
-}
-.assoziated-groups a:hover{
-    background-color: var(--inverse);
-    color: var(--buttoncolor)
-}
+/*}*/
+/*.assoziated-groups a:hover{*/
+/*    background-color: var(--inverse);*/
+/*    color: var(--buttoncolor)*/
+/*}*/
 .avatar-list {
     display: flex;
     flex-wrap: wrap;
@@ -324,10 +334,29 @@
     border-radius: 25px;
     height: 49px;
     position: relative;
-
-
-
 }
+.group-builder-join-button-container {
+    text-align: center;
+    margin: -10px auto 10px;
+}
+.group-builder-create-button-container button {
+    border-radius: 3px;
+    position: absolute;
+    top: 7px;
+    padding: 5px 20px;
+    border: 1px solid var(--buttoncolor);
+}
+.group-builder-create-button-container button:hover,
+.group-builder-join-button-container button:hover {
+    background-color: var(--buttoncolor);
+    color: var(--background)
+}
+.group-builder-join-button-container button {
+    border-radius: 3px;
+    padding: 5px 20px;
+    border: 1px solid var(--buttoncolor);
+}
+
 div.clearfix {
     clear: both;
     width: 100%;
@@ -404,11 +433,15 @@ div.clearfix {
     max-height: calc(100vh - 50px);
 }
 #wpadminbar #wp-admin-bar-my-account.with-avatar #wp-admin-bar-user-actions > li {
-    margin-left: 20px;
+    margin-left: 10px;
 }
 #wp-admin-bar-root-default .custom a.ab-item {
     color: var(--akcent);
 }
+#wp-admin-bar-my-account > a {
+    padding-right: 20px !important;
+}
+
 /*schrift in der mobilen adminbar sichtbar machen */
 @media screen and (max-width: 782px) {
     #wpadminbar .ab-label {
@@ -527,4 +560,18 @@ a.ct-menu-link {
     animation:slide 3s ease-in-out infinite alternate;
     background-image: linear-gradient(-60deg,  var(--background2) 50%, var(--akcent));
 
+}
+
+/** ULtinate Member **/
+.um .um-button.um-alt, .um input[type="submit"].um-button.um-alt {
+    color: var(--background);
+}
+.um-directory .um-members-wrapper .um-members.um-members-grid .um-member .um-member-card .um-members-edit-btn a.um-edit-profile-btn::before {
+    color: var(--background);
+}
+.um-members-pagination-box span.pagi:not(.pagi-arrow) {
+    background-color: aliceblue;
+}
+.um-members-pagination-box span.current {
+    background-color: var(--buttoncolor)!important;
 }

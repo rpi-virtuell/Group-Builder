@@ -47,7 +47,11 @@ class GroupBuilderColor
             $rgba_color = $this->hexToRgba($this->css3ColorToHex($color), 0.5);
 
             echo "\n.$class_name { 
-                background-image: linear-gradient(to top right, rgba(255,255,255,1),$rgba_color);
+                background-image: linear-gradient(.58turn,$rgba_color,6em, rgba(255,255,255,1),50em,rgba(255,255,255,1));
+                
+            }\n";
+            echo "\n.single-pinwall_post .$class_name { 
+                background-image: linear-gradient(.58turn,$rgba_color,6em, rgba(255,255,255,1),50em,rgba(255,255,255,1));
             }\n";
 
         }
