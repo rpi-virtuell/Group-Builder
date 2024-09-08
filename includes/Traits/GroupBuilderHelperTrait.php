@@ -163,7 +163,7 @@ trait GroupBuilderHelperTrait {
         return [$buttons, $create_button];
     }
 
-    public function group_builder_user_can($post_id, $action = 'edit') {
+    public function group_builder_user_can($post_id = null, $action = 'edit') {
         if(is_singular('pinwall_post')){
             $post=get_post($post_id);
             if($post->post_author == get_current_user_id()){
