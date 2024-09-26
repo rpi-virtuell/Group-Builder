@@ -73,7 +73,7 @@ class GroupBuilderFrontend {
 
     public function group_goal(){
         if(is_singular(['group_post'])){
-            $goal = get_post_meta(get_the_ID(), 'group_exerpt', true);
+            $goal = get_post_meta(get_the_ID(), 'group_goal', true);
             if($goal){
                 echo '<div class="group-goal"><h2>Unser Ziel:</h2><p>'.$goal.'</p><h2>Herausforderungen und Schwerkunkte:</h2></div>';
             }

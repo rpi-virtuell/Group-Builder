@@ -463,7 +463,7 @@ div.clearfix {
     font-size: 30px;
     font-weight: bold;
 }
-.custom-modal .acf-field[data-name="group_exerpt"] textarea {
+.custom-modal .acf-field[data-name="group_goal"] textarea {
     font-size: 20px;
     font-weight: bold;
     height: 80px;

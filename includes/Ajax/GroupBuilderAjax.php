@@ -255,6 +255,7 @@ class GroupBuilderAjax {
 
         if ($group_id) {
             update_post_meta($group_id, '_group_members', $interested_users);
+            update_post_meta($group_id, '_pinwall_post', $post_id);
             add_post_meta($post_id, '_associated_group', $group_id);
             delete_post_meta($post_id, '_interested_users');
             return $group_id;
