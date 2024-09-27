@@ -3,7 +3,12 @@
     padding-left: 10px;
     margin-left: -10px;
 }
-.entry-card.card-content.group_post, .entry-card.card-content.pinwall_post {
+.entry-card.card-content.group_post {
+    display: grid;
+    grid-template-columns: 1fr;
+
+}
+.entry-card.card-content.pinwall_post {
     display: grid;
     grid-template-columns: 1fr;
     grid-template-rows: minmax(20px,1fr);
