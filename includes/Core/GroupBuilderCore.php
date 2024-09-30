@@ -4,7 +4,7 @@ namespace GroupBuilder\Core;
 use GroupBuilder\Ajax\GroupBuilderAjax;
 use GroupBuilder\Frontend\GroupBuilderFrontend;
 use GroupBuilder\Integrations\GroupBuilderIntegrations;
-use GroupBuilder\Admin\GroupBuilderAdmin;
+#use GroupBuilder\Admin\GroupBuilderAdmin;
 use GroupBuilder\Traits\GroupBuilderHelperTrait;
 use GroupBuilder\Color\GroupBuilderColor;
 
@@ -29,7 +29,7 @@ class GroupBuilderCore {
         new GroupBuilderAjax();
         new GroupBuilderFrontend();
         new GroupBuilderIntegrations();
-        new GroupBuilderAdmin();
+        #new GroupBuilderAdmin();
         new GroupBuilderColor();
     }
 

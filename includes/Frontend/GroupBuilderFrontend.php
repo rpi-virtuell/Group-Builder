@@ -97,61 +97,7 @@ class GroupBuilderFrontend {
         }
     }
 
-    private function get_action_buttons($post_id, $group_id = null, $has_groups = false) {
-        $join_svg = '<svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 20 20" height="20px" viewBox="0 0 20 20" width="20px" fill="#5f6368"><g><rect fill="none" height="20" width="20"/></g><g><g><path d="M8,10c1.66,0,3-1.34,3-3S9.66,4,8,4S5,5.34,5,7S6.34,10,8,10z M8,5.5c0.83,0,1.5,0.67,1.5,1.5S8.83,8.5,8,8.5 S6.5,7.83,6.5,7S7.17,5.5,8,5.5z"/><path d="M13.03,12.37C11.56,11.5,9.84,11,8,11s-3.56,0.5-5.03,1.37C2.36,12.72,2,13.39,2,14.09V16h12v-1.91 C14,13.39,13.64,12.72,13.03,12.37z M12.5,14.5h-9v-0.41c0-0.18,0.09-0.34,0.22-0.42C5.02,12.9,6.5,12.5,8,12.5 s2.98,0.4,4.28,1.16c0.14,0.08,0.22,0.25,0.22,0.42V14.5z"/><polygon points="16.25,7.75 16.25,6 14.75,6 14.75,7.75 13,7.75 13,9.25 14.75,9.25 14.75,11 16.25,11 16.25,9.25 18,9.25 18,7.75"/></g></g></svg>';
-        $leave_svg = '<svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewBox="0 0 24 24" width="24px" fill="#5f6368"><rect fill="none" height="24" width="24"/><path d="M20,17.17l-3.37-3.38c0.64,0.22,1.23,0.48,1.77,0.76C19.37,15.06,19.98,16.07,20,17.17z M21.19,21.19l-1.41,1.41L17.17,20H4 v-2.78c0-1.12,0.61-2.15,1.61-2.66c1.29-0.66,2.87-1.22,4.67-1.45L1.39,4.22l1.41-1.41L21.19,21.19z M15.17,18l-3-3 c-0.06,0-0.11,0-0.17,0c-2.37,0-4.29,0.73-5.48,1.34C6.2,16.5,6,16.84,6,17.22V18H15.17z M12,6c1.1,0,2,0.9,2,2 c0,0.86-0.54,1.59-1.3,1.87l1.48,1.48C15.28,10.64,16,9.4,16,8c0-2.21-1.79-4-4-4c-1.4,0-2.64,0.72-3.35,1.82l1.48,1.48 C10.41,6.54,11.14,6,12,6z"/></svg>';
 
-        $current_user_id = get_current_user_id();
-        if (!$current_user_id) {
-            return ['', ''];
-        }
-        $create_button = '';
-        $button_template = '<div class="group-builder-button-container">
-                                <button class="%s" data-post-id="%d" title="%s">
-                                    %s
-                                </button>
-                            </div>';
-
-        $button2_template = '<div class="group-builder-create-button-container">
-                                <button class="%s"  data-post-id="%d">
-                                     %s
-                                </button>
-                            </div>';
-        $buttons = '';
-
-        if (get_post_type($post_id) === 'pinwall_post') {
-            $interested_users = get_post_meta($post_id, '_interested_users', true);
-            if (!is_array($interested_users)) {
-                $interested_users = array();
-            }
-            if (in_array($current_user_id, $interested_users)) {
-                $buttons .= sprintf($button_template, 'withdraw-interest', $post_id, 'Mein Interesse zurückziehen', $leave_svg,);
-
-                if (count($interested_users) >= 2) {
-                    $create_button = sprintf($button2_template, 'create-group', $post_id, 'Gruppe gründen');
-                }
-            } else {
-                $buttons .= sprintf($button_template, 'show-interest', $post_id, 'Interesse zeigen', $join_svg,);
-            }
-        } elseif ($group_id) {
-            $members = get_post_meta($group_id, '_group_members', true);
-            if (!is_array($members)) {
-                $members = array();
-            }
-            if(get_option('group_builder_avatar_actions')) {
-                if (in_array($current_user_id, $members)) {
-                    $buttons .= sprintf($button_template, 'leave-group', $group_id, 'Gruppe verlassen',$leave_svg);
-                } else {
-                    $buttons .= sprintf($button_template, 'join-group', $group_id, 'Gruppe beitreten',$join_svg);
-                }
-            }
-            if(!in_array($current_user_id, $members) && count($members) < get_option('group_builder_max_members',4)){
-                $buttons .= sprintf($button_template, 'join-group', $group_id, 'Gruppe beitreten',$join_svg);
-            }
-        }
-
-        return [$buttons, $create_button];
-    }
 
     public function set_adminbar() {
         if (is_admin()) {
@@ -185,31 +131,27 @@ class GroupBuilderFrontend {
         if (is_singular('pinwall_post') && is_user_logged_in()) {
             if ($this->group_builder_user_can( get_the_ID(), 'edit')) {
                 $adminbar->addMegaMenu('', 'Bearbeiten', 'pin-edit-modal', 'dashicons-edit');
-//                $adminbar->addMegaMenuContent('edit_pinwall_post',
-//                    '<div><h3>Pinwand Karte bearbeiten</h3>' . do_shortcode('[acfe_form name="edit_pinwall_post"]') . '</div>',
-//                    'full');
-                $this->display_modal_frame();
+//
             }
         }
 
         if (is_singular('group_post')) {
-            $group_settings_content = '<div class="form_wrapper">
-            <h3>Gruppe konfigurieren</h3></div>';
-            $group_tools_content = '';
             if ($this->group_builder_user_can(get_the_ID(), 'edit')) {
+
                 if(get_query_var('group-space') ) {
-                    $adminbar->addMegaMenu($parent, 'Lernwerkzeuge konfigurieren', 'group_tools', 'dashicons-admin-generic');
-                    $adminbar->addMegaMenuContent('group_tools', '<div><h3>Lernwerkzeuge konfigurieren</h3></div>');
                     $adminbar->add($parent, 'Zur Gruppe', '?', 'dashicons-exit');
+                    $this->display_modal_frame('group_config');
                 }else{
                     $adminbar->addMegaMenu($parent, 'Gruppe konfigurieren', 'group-edit-modal', 'dashicons-edit');
+                    $adminbar->addMegaMenu($parent, 'Lernwerkzeuge konfigurieren', 'group-tools-modal', 'dashicons-admin-generic');
                     $adminbar->add($parent, 'Lernraum', '?group-space=1', 'dashicons-welcome-learn-more');
 
                 }
 
             }
-            $this->display_modal_frame();
+
         }
+        $this->display_modal_frame();
         $adminbar->add_modal_and_mega_menu_html();
     }
     /**
@@ -254,6 +196,14 @@ class GroupBuilderFrontend {
                     <h2>Gruppe konfigurieren</h2>
                     <?php $this->invite_link_copy_button(); ?><br>
                     <?php echo do_shortcode('[acfe_form name="edit_group"]'); ?>
+
+                </div>
+            </div>
+            <div id="group-tools-modal" class="custom-modal" style="display: none;">
+                <div class="custom-modal-content">
+                    <span class="custom-modal-close">&times;</span>
+                    <h3>Lernwerkzeuge konfigurieren</h3>
+                    <?php echo do_shortcode('[acfe_form name="config-tools"]');?>
 
                 </div>
             </div>

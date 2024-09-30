@@ -12,7 +12,7 @@ trait GroupBuilderHelperTrait {
 
     public function check_group_limit($group_id) {
         $members = $this->get_group_members($group_id);
-        $max_members = apply_filters('group_builder_max_members', get_option('group_builder_max_members', 10));
+        $max_members = apply_filters('options_group_builder_max_members', get_option('options_group_builder_max_members', 10));
         return count($members) < $max_members;
     }
 
@@ -33,6 +33,10 @@ trait GroupBuilderHelperTrait {
         return get_permalink($group_id) . '?invite=' . $hash;
     }
     public function get_avatar_list($post_id = null) {
+        if(isset($_GET['group-space'])){
+            return null;
+        }
+
         $do_print_output = false;
         $has_groups = false;
         $output = '';
@@ -135,7 +139,7 @@ trait GroupBuilderHelperTrait {
             if (in_array($current_user_id, $interested_users)) {
                 $buttons .= sprintf($button_template, 'withdraw-interest', $post_id, 'Mein Interesse zurückziehen', $leave_svg,);
 
-                if (count($interested_users) >= 2) {
+                if (count($interested_users) >= get_option('options_group_builder_min_members', 2)) {
                     $create_button = sprintf($button2_template, 'create-group', $post_id, 'Gruppe gründen');
                 }
             } else {
@@ -146,18 +150,16 @@ trait GroupBuilderHelperTrait {
             if (!is_array($members)) {
                 $members = array();
             }
-            if(get_option('group_builder_avatar_actions')) {
+            if(get_option('options_group_builder_avatar_actions')) {
                 if (in_array($current_user_id, $members)) {
                     $buttons .= sprintf($button_template, 'leave-group', $group_id, 'Gruppe verlassen',$leave_svg);
                 } else {
-                    $buttons .= sprintf($button_template, 'join-group', $group_id, 'Gruppe beitreten',$join_svg);
+                    if (count($members) < get_option('options_group_builder_max_members', 4)) {
+                        $buttons .= sprintf($button_template, 'join-group', $group_id, 'Gruppe beitreten',$join_svg);
+                    }
                 }
             }
-            if(!in_array($current_user_id, $members) && count($members) < get_option('group_builder_max_members',4)){
-                if(get_option('group_builder_avatar_actions')) {
-                    $buttons .= sprintf($button_template, 'join-group', $group_id, 'Gruppe beitreten', $join_svg);
-                }
-            }
+
         }
 
         return [$buttons, $create_button];

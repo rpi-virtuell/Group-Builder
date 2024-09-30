@@ -214,25 +214,25 @@ jQuery(document).ready(function($) {
 
     // Todo: Image Pfade für die Menüpunkte anpassen aus dem Pluginpfad ./images/ holen
     jQuery("a.ct-menu-link:contains('Startseite')")
-        .css('background-image',"url('https://lernende-community.local/wp-content/uploads/2024/08/markt.png')")
+        .css('background-image',"url('/wp-content/uploads/assets/markt.png')")
         .css('background-size','50px')
         .css('background-repeat', 'no-repeat')
         .css('background-position', 'center center')
         .css('padding-top','70px');
     jQuery("a.ct-menu-link:contains('Pinwand')")
-        .css('background-image',"url('https://lernende-community.local/wp-content/uploads/2024/08/pinnwand.png')")
+        .css('background-image',"url('/wp-content/uploads/assets/pinnwand.png')")
         .css('background-size','50px')
         .css('background-repeat', 'no-repeat')
         .css('background-position', 'center center')
         .css('padding-top','70px');
     jQuery("a.ct-menu-link:contains('Gruppen')")
-        .css('background-image',"url('https://lernende-community.local/wp-content/uploads/2024/08/gruppe.png')")
+        .css('background-image',"url('/wp-content/uploads/assets/gruppe.png')")
         .css('background-size','50px')
         .css('background-repeat', 'no-repeat')
         .css('background-position', 'center center')
         .css('padding-top','70px');
     jQuery("a.ct-menu-link:contains('Mitglieder')")
-        .css('background-image',"url('https://lernende-community.local/wp-content/uploads/2024/08/netzwerk.png')")
+        .css('background-image',"url('/wp-content/uploads/assets/netzwerk.png')")
         .css('background-size','50px')
         .css('background-repeat', 'no-repeat')
         .css('background-position', 'center center')
