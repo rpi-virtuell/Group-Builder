@@ -6,10 +6,15 @@ use GroupBuilder\Traits\GroupBuilderHelperTrait;
 class GroupBuilderFrontend {
     use GroupBuilderHelperTrait;
 
+    protected $tools;
+    protected $has_tools;
+
+
     public function __construct() {
         $this->setup_shortcodes();
         $this->setup_frontend_actions();
     }
+
 
     private function setup_shortcodes() {
         add_shortcode('group_members', [$this, 'group_members_shortcode']);
@@ -97,13 +102,61 @@ class GroupBuilderFrontend {
         }
     }
 
+    public function read_tools()
+    {
+        $group_id = get_the_ID();
 
+        $group_tool_matrixroom = get_field('group_tool_matrixroom',$group_id);       // url
+        $group_tool_exclidraw = get_field('group_tool_exclidraw', $group_id);        // bool
+        $group_tool_nuudel = get_field('group_tool_nuudel', $group_id);              // bool
+        $group_tool_custom_tool = get_field('group_tool_custom_tool', $group_id);    // array
+
+        $tools = array();
+
+        if($group_tool_matrixroom){
+            $tools['matrix']=array('name'=>'Matrixroom','url'=>$group_tool_matrixroom);
+            $this->has_tools = true;
+        }
+
+        if($group_tool_exclidraw){
+            $url = get_post_meta($group_id, 'group_tool_exclidraw_url', true);
+            if($url){
+                // 22 zeichen langer schlüssel generieren
+                $room = substr(str_shuffle('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'), 0, 20);
+                $random = substr(str_shuffle('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'), 0, 22);
+                $url = 'https://excalidraw.com/#room='.$room.','.$random;
+                update_post_meta(get_the_ID(), 'group_tool_exclidraw_url', $url);
+            }
+            $tools['excalidraw']=array('name'=>'Whiteboard','url'=>$url);
+            $this->has_tools = true;
+        }
+        if ($group_tool_nuudel) {
+            $url = 'https://nuudel.digitalcourage.de/create_poll.php?type=date';
+            $tools['nuudel']=array('name'=>'Terminfinder','url'=>$url);
+            $this->has_tools = true;
+        }
+        if($group_tool_custom_tool){
+            foreach($group_tool_custom_tool as $tool){
+                if($tool['active']){
+                    $key = sanitize_key($tool['label']);
+                    $tools[$key]=array('name'=>$tool['label'],'url'=>$tool['url']);
+                    $this->has_tools = true;
+                }
+
+            }
+        }
+        $this->tools = $tools;
+        return $tools;
+
+    }
 
     public function set_adminbar() {
         if (is_admin()) {
             return;
         }
         global $customized_wordpress_adminbar;
+
+        $tools = $this->read_tools();
 
         $user = wp_get_current_user();
         $adminbar = $customized_wordpress_adminbar;
@@ -138,14 +191,24 @@ class GroupBuilderFrontend {
         if (is_singular('group_post')) {
             if ($this->group_builder_user_can(get_the_ID(), 'edit')) {
 
+                if($this->has_tools){
+                    $tools = $adminbar->add('', 'Werkzeuge', '#','dashicons-admin-tools');
+                    foreach($this->tools as $tool){
+                        $meta = array('target'=>'_blank');
+                        $adminbar->add($tools, $tool['name'], $tool['url'], 'dashicons-marker',$meta);
+                    }
+
+                }
+
                 if(get_query_var('group-space') ) {
-                    $adminbar->add($parent, 'Zur Gruppe', '?', 'dashicons-exit');
+                    $adminbar->add($parent, 'Zur Gruppenseite', '?', 'dashicons-exit');
+
+                    $adminbar->addMegaMenu($parent, 'Integrationen', 'group-tools-modal', 'dashicons-admin-generic');
                     $this->display_modal_frame('group_config');
                 }else{
-                    $adminbar->addMegaMenu($parent, 'Gruppe konfigurieren', 'group-edit-modal', 'dashicons-edit');
-                    $adminbar->addMegaMenu($parent, 'Lernwerkzeuge konfigurieren', 'group-tools-modal', 'dashicons-admin-generic');
-                    $adminbar->add($parent, 'Lernraum', '?group-space=1', 'dashicons-welcome-learn-more');
-
+                    $adminbar->addMegaMenu($parent, 'Gruppe bearbeiten', 'group-edit-modal', 'dashicons-edit');
+                    $adminbar->add($parent, 'Meeting', '?group-space=1', 'dashicons-welcome-learn-more');
+                    $adminbar->addMegaMenu($parent, 'Integrationen', 'group-tools-modal', 'dashicons-admin-generic');
                 }
 
             }
@@ -193,7 +256,7 @@ class GroupBuilderFrontend {
             <div id="group-edit-modal" class="custom-modal" style="display: none;">
                 <div class="custom-modal-content">
                     <span class="custom-modal-close">&times;</span>
-                    <h2>Gruppe konfigurieren</h2>
+                    <h2>Gruppe bearbeiten</h2>
                     <?php $this->invite_link_copy_button(); ?><br>
                     <?php echo do_shortcode('[acfe_form name="edit_group"]'); ?>
 
@@ -202,7 +265,7 @@ class GroupBuilderFrontend {
             <div id="group-tools-modal" class="custom-modal" style="display: none;">
                 <div class="custom-modal-content">
                     <span class="custom-modal-close">&times;</span>
-                    <h3>Lernwerkzeuge konfigurieren</h3>
+                    <h3>Werkzeuge und Integrationen für diese Gruppe</h3>
                     <?php echo do_shortcode('[acfe_form name="config-tools"]');?>
 
                 </div>
