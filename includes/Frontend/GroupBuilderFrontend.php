@@ -67,7 +67,7 @@ class GroupBuilderFrontend {
     }
 
     public function join_group_button(){
-        if(is_singular(['group_post']) && $this->group_builder_user_can(get_the_ID(), 'join')){
+        if(is_user_logged_in() && is_singular(['group_post']) && $this->group_builder_user_can(get_the_ID(), 'join')){
             echo '<div class="group-builder-join-button-container">
                     <button class="join-group" data-post-id="'.get_the_ID().'">
                         <span>Gruppe beitreten</span>
