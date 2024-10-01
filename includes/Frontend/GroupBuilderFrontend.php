@@ -109,18 +109,36 @@ class GroupBuilderFrontend {
         $group_tool_matrixroom = get_field('group_tool_matrixroom',$group_id);       // url
         $group_tool_exclidraw = get_field('group_tool_exclidraw', $group_id);        // bool
         $group_tool_nuudel = get_field('group_tool_nuudel', $group_id);              // bool
-        $group_tool_custom_tool = get_field('group_tool_custom_tool', $group_id);    // array
+        $group_tool_oer_maker = get_field('group_tool_oer_maker', $group_id);        // array
+        $group_tool_custom_tools = get_field('group_tool_custom_tools', $group_id);    // array
 
         $tools = array();
-
-        if($group_tool_matrixroom){
-            $tools['matrix']=array('name'=>'Matrixroom','url'=>$group_tool_matrixroom);
+        if ($group_tool_nuudel) {
+            $url = 'https://nuudel.digitalcourage.de/create_poll.php?type=date';
+            $tools[]=array('name'=>'Terminfinder','url'=>$url);
             $this->has_tools = true;
         }
 
+        if($group_tool_matrixroom){
+            $tools[]=array('name'=>'Matrix Channel','url'=>$group_tool_matrixroom);
+            $this->has_tools = true;
+        }
+
+        if($group_tool_oer_maker){
+            $url = get_post_meta($group_id, 'group_tool_liascript_url', true);
+            if(!$url){
+                $oer_id = substr(str_shuffle('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'), 0, 24);
+                $url = 'https://liascript.github.io/LiveEditor/?/edit/'.$oer_id.'/webrtc';
+                update_post_meta(get_the_ID(), 'group_tool_liascript_url', $url);
+            }
+            $tools[]=array('name'=>'LiaScript Editor','url'=>$url);
+            $this->has_tools = true;
+        }
+
+
         if($group_tool_exclidraw){
             $url = get_post_meta($group_id, 'group_tool_exclidraw_url', true);
-            if($url){
+            if(!$url){
                 // 22 zeichen langer schlüssel generieren
                 $room = substr(str_shuffle('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'), 0, 20);
                 $random = substr(str_shuffle('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'), 0, 22);
@@ -130,15 +148,11 @@ class GroupBuilderFrontend {
             $tools[]=array('name'=>'Whiteboard','url'=>$url);
             $this->has_tools = true;
         }
-        if ($group_tool_nuudel) {
-            $url = 'https://nuudel.digitalcourage.de/create_poll.php?type=date';
-            $tools[]=array('name'=>'Terminfinder','url'=>$url);
-            $this->has_tools = true;
-        }
-        if($group_tool_custom_tool){
-            foreach($group_tool_custom_tool as $tool){
+        if($group_tool_custom_tools){
+            error_log(print_r($group_tool_custom_tools, true));
+            foreach($group_tool_custom_tools as $tool){
                 if($tool['active']){
-                    $key = sanitize_key($tool['label']);
+                    //$key = sanitize_key($tool['label']);
                     $tools[]=array('name'=>$tool['label'],'url'=>$tool['url']);
                     $this->has_tools = true;
                 }
@@ -191,6 +205,18 @@ class GroupBuilderFrontend {
         if (is_singular('group_post')) {
             if ($this->group_builder_user_can(get_the_ID(), 'edit')) {
 
+
+                if(get_query_var('group-space') ) {
+                    $group_view = $adminbar->add($parent, 'Zur Gruppenseite', '?', 'dashicons-exit');
+
+                    $adminbar->addMegaMenu($group_view, 'Integrationen', 'group-tools-modal', 'dashicons-admin-generic');
+                    $this->display_modal_frame('group_config');
+                }else{
+                    $group_edit = $adminbar->addMegaMenu($parent, 'Gruppe bearbeiten', 'group-edit-modal', 'dashicons-edit');
+                    $adminbar->add($parent, 'Meeting', '?group-space=1', 'dashicons-welcome-learn-more');
+                    $adminbar->addMegaMenu($group_edit, 'Integrationen', 'group-tools-modal', 'dashicons-admin-generic');
+                }
+
                 if($this->has_tools){
                     $tools = $adminbar->add('', 'Werkzeuge', '#','dashicons-admin-tools');
                     foreach($this->tools as $tool){
@@ -198,17 +224,6 @@ class GroupBuilderFrontend {
                         $adminbar->add($tools, $tool['name'], $tool['url'], 'dashicons-marker',$meta);
                     }
 
-                }
-
-                if(get_query_var('group-space') ) {
-                    $adminbar->add($parent, 'Zur Gruppenseite', '?', 'dashicons-exit');
-
-                    $adminbar->addMegaMenu($parent, 'Integrationen', 'group-tools-modal', 'dashicons-admin-generic');
-                    $this->display_modal_frame('group_config');
-                }else{
-                    $adminbar->addMegaMenu($parent, 'Gruppe bearbeiten', 'group-edit-modal', 'dashicons-edit');
-                    $adminbar->add($parent, 'Meeting', '?group-space=1', 'dashicons-welcome-learn-more');
-                    $adminbar->addMegaMenu($parent, 'Integrationen', 'group-tools-modal', 'dashicons-admin-generic');
                 }
 
             }
