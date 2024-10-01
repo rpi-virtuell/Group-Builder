@@ -127,19 +127,19 @@ class GroupBuilderFrontend {
                 $url = 'https://excalidraw.com/#room='.$room.','.$random;
                 update_post_meta(get_the_ID(), 'group_tool_exclidraw_url', $url);
             }
-            $tools['excalidraw']=array('name'=>'Whiteboard','url'=>$url);
+            $tools[]=array('name'=>'Whiteboard','url'=>$url);
             $this->has_tools = true;
         }
         if ($group_tool_nuudel) {
             $url = 'https://nuudel.digitalcourage.de/create_poll.php?type=date';
-            $tools['nuudel']=array('name'=>'Terminfinder','url'=>$url);
+            $tools[]=array('name'=>'Terminfinder','url'=>$url);
             $this->has_tools = true;
         }
         if($group_tool_custom_tool){
             foreach($group_tool_custom_tool as $tool){
                 if($tool['active']){
                     $key = sanitize_key($tool['label']);
-                    $tools[$key]=array('name'=>$tool['label'],'url'=>$tool['url']);
+                    $tools[]=array('name'=>$tool['label'],'url'=>$tool['url']);
                     $this->has_tools = true;
                 }
 
