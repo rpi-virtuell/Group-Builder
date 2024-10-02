@@ -31,6 +31,35 @@ class GroupBuilderFrontend {
         add_action('blocksy:comments:top', [$this, 'comments_header']);
 
         add_action('admin_bar_menu', [$this, 'set_adminbar'], 10000);
+
+
+        add_filter('acf/load_value/name=event_group_id', [$this,'preset_event_group_id_value'], 10,3);
+        add_filter('acf/load_value/name=event_title', [$this,'preset_event_title_value'], 10,3);
+        add_filter('acf/load_value/name=event_url', [$this,'preset_event_url_value'], 10,3);
+
+
+    }
+
+    public function preset_event_group_id_value($value, $post_id, $field) {
+        if(is_singular('group_post')){
+            $value = get_the_ID();
+        }
+        return $value;
+
+    }
+    public function preset_event_title_value($value, $post_id, $field) {
+        if(is_singular('group_post')){
+            $value = 'Meeting der Gruppe "'.get_the_title().'"';
+        }
+        return $value;
+
+    }
+    public function preset_event_url_value($value, $post_id, $field) {
+        if(is_singular('group_post')){
+            $value = get_permalink()."?group-space=1";
+        }
+        return $value;
+
     }
 
     public function group_members_shortcode($atts) {

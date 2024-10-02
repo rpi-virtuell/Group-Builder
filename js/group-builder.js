@@ -238,4 +238,17 @@ jQuery(document).ready(function($) {
         .css('background-position', 'center center')
         .css('padding-top','70px');
 
+    // Datepicker für Event-Start- und Enddatum synchronisieren
+    $('.acf-field[data-name="event_start_date"]').on('change',function(e, $el){
+        console.log('Event Start Date changed');
+        $('.acf-field[data-name="event_start_date"]').find('.input-alt').each(function(el){
+            var startdate = $(this).val();
+            var enddate = new Date(startdate);
+            enddate.setHours(enddate.getHours() + 2);
+            $('.acf-field[data-name="event_end_date"] .hasDatepicker').datepicker('setDate', enddate)
+        });
+    });
+
+    console.log($('.acf-field[data-name="event_start_date"] .input-alt'));
 });
+
