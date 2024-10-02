@@ -19,6 +19,7 @@ class GroupBuilderFrontend {
     private function setup_shortcodes() {
         add_shortcode('group_members', [$this, 'group_members_shortcode']);
         add_shortcode('group_edit_form', [$this, 'group_edit_form_shortcode']);
+        add_shortcode('group_space_tools', [$this, 'group_space_tools_shortcode']);
     }
 
     private function setup_frontend_actions() {
@@ -54,6 +55,18 @@ class GroupBuilderFrontend {
         return ob_get_clean();
     }
 
+    public function group_space_tools_shortcode()
+    {
+        if(!$tools = $this->tools)
+            $tools = $this->read_tools();
+        $html = '';
+        foreach ($tools as $tool) {
+            $html .= '<li><a href="'.$tool['url'].'">
+                <span>' . $tool['name'] . '</span>
+            </a></li>';
+        }
+        return $html;
+    }
     public function get_pinnwall_post_avatar_list(){
         if(is_singular(['pinwall_post'])){
             $this->get_avatar_list();
