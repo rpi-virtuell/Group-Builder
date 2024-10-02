@@ -57,15 +57,24 @@ class GroupBuilderFrontend {
 
     public function group_space_tools_shortcode()
     {
-        if(!$tools = $this->tools)
-            $tools = $this->read_tools();
-        $html = '';
-        foreach ($tools as $tool) {
-            $html .= '<li><a href="'.$tool['url'].'">
+        if(!is_user_logged_in()){
+            return '<p>Um die Tools zu sehen, musst du Mitglied dieser Gruppe und eingeloggt sein.</p>';
+        }
+        if($this->group_builder_user_can(get_the_ID(), 'edit')){
+            $this->read_tools();
+            if(!$tools = $this->tools)
+                $tools = $this->read_tools();
+            $html = '<ol><li><strong><a href="?group-space=1">Meeting Raum mit Etherpad</a></strong></li>';
+            foreach ($tools as $tool) {
+                $html .= '<li><a href="'.$tool['url'].'">
                 <span>' . $tool['name'] . '</span>
             </a></li>';
+            }
+            return $html.'</ol>';
+        }else{
+            return '<p>Um die Tools zu sehen, musst du Mitglied dieser Gruppe sein.</p>';
         }
-        return $html;
+
     }
     public function get_pinnwall_post_avatar_list(){
         if(is_singular(['pinwall_post'])){
@@ -128,12 +137,12 @@ class GroupBuilderFrontend {
         $tools = array();
         if ($group_tool_nuudel) {
             $url = 'https://nuudel.digitalcourage.de/create_poll.php?type=date';
-            $tools[]=array('name'=>'Terminfinder','url'=>$url);
+            $tools[]=array('name'=>'Terminfinder (Nuudel)','url'=>$url);
             $this->has_tools = true;
         }
 
         if($group_tool_matrixroom){
-            $tools[]=array('name'=>'Matrix Channel','url'=>$group_tool_matrixroom);
+            $tools[]=array('name'=>'Matrix Channel (Messenger)','url'=>$group_tool_matrixroom);
             $this->has_tools = true;
         }
 
@@ -144,7 +153,7 @@ class GroupBuilderFrontend {
                 $url = 'https://liascript.github.io/LiveEditor/?/edit/'.$oer_id.'/webrtc';
                 update_post_meta(get_the_ID(), 'group_tool_liascript_url', $url);
             }
-            $tools[]=array('name'=>'LiaScript Editor','url'=>$url);
+            $tools[]=array('name'=>'LiaScript Editor (Kollaborativer OER Editor)','url'=>$url);
             $this->has_tools = true;
         }
 
@@ -158,7 +167,7 @@ class GroupBuilderFrontend {
                 $url = 'https://excalidraw.com/#room='.$room.','.$random;
                 update_post_meta(get_the_ID(), 'group_tool_exclidraw_url', $url);
             }
-            $tools[]=array('name'=>'Whiteboard','url'=>$url);
+            $tools[]=array('name'=>'Whiteboard (Excalidraw)','url'=>$url);
             $this->has_tools = true;
         }
         if($group_tool_custom_tools){
@@ -221,20 +230,21 @@ class GroupBuilderFrontend {
 
                 if(get_query_var('group-space') ) {
                     $group_view = $adminbar->add($parent, 'Zur Gruppenseite', '?', 'dashicons-exit');
-
                     $adminbar->addMegaMenu($group_view, 'Integrationen', 'group-tools-modal', 'dashicons-admin-generic');
+                    $meeting = $adminbar->add($parent, 'Meeting', '#', 'dashicons-welcome-learn-more');
                     $this->display_modal_frame('group_config');
                 }else{
                     $group_edit = $adminbar->addMegaMenu($parent, 'Gruppe bearbeiten', 'group-edit-modal', 'dashicons-edit');
-                    $adminbar->add($parent, 'Meeting', '?group-space=1', 'dashicons-welcome-learn-more');
+                    $meeting = $adminbar->add($parent, 'Meeting', '?group-space=1', 'dashicons-welcome-learn-more');
                     $adminbar->addMegaMenu($group_edit, 'Integrationen', 'group-tools-modal', 'dashicons-admin-generic');
                 }
+                $adminbar->addMegaMenu($parent, '+ Termin', 'group-events-modal', 'dashicons-calendar');
 
                 if($this->has_tools){
-                    $tools = $adminbar->add('', 'Werkzeuge', '#','dashicons-admin-tools');
+                    // $tools = $adminbar->add('', 'Werkzeuge', '#','dashicons-admin-tools');
                     foreach($this->tools as $tool){
                         $meta = array('target'=>'_blank');
-                        $adminbar->add($tools, $tool['name'], $tool['url'], 'dashicons-marker',$meta);
+                        $adminbar->add($meeting, $tool['name'], $tool['url'], 'dashicons-marker',$meta);
                     }
 
                 }
@@ -295,6 +305,14 @@ class GroupBuilderFrontend {
                     <span class="custom-modal-close">&times;</span>
                     <h3>Werkzeuge und Integrationen für diese Gruppe</h3>
                     <?php echo do_shortcode('[acfe_form name="config-tools"]');?>
+
+                </div>
+            </div>
+            <div id="group-events-modal" class="custom-modal" style="display: none;">
+                <div class="custom-modal-content">
+                    <span class="custom-modal-close">&times;</span>
+                    <h3>Neuer Termin</h3>
+                    <?php echo do_shortcode('[acfe_form name="community-events"]');?>
 
                 </div>
             </div>
