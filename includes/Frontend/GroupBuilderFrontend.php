@@ -20,6 +20,7 @@ class GroupBuilderFrontend {
         add_shortcode('group_members', [$this, 'group_members_shortcode']);
         add_shortcode('group_edit_form', [$this, 'group_edit_form_shortcode']);
         add_shortcode('group_space_tools', [$this, 'group_space_tools_shortcode']);
+        add_shortcode('group_events', [$this, 'group_events_shortcode']);
     }
 
     private function setup_frontend_actions() {
@@ -36,10 +37,19 @@ class GroupBuilderFrontend {
         add_filter('acf/load_value/name=event_group_id', [$this,'preset_event_group_id_value'], 10,3);
         add_filter('acf/load_value/name=event_title', [$this,'preset_event_title_value'], 10,3);
         add_filter('acf/load_value/name=event_url', [$this,'preset_event_url_value'], 10,3);
+        add_filter('acf/load_field/name=event_url', [$this,'preset_event_url_defaulvalue'], 10,1);
+        add_filter('acf/load_field/name=event_visibility', [$this,'preset_event_visibility_value'], 10,1);
 
-
+        add_action('init', [$this,'download_ical']);
     }
 
+    public function preset_event_visibility_value($field) {
+        if(is_admin() ){
+            $field['default_value'] = 'guest';
+        }
+        return $field;
+
+    }
     public function preset_event_group_id_value($value, $post_id, $field) {
         if(is_singular('group_post')){
             $value = get_the_ID();
@@ -54,7 +64,13 @@ class GroupBuilderFrontend {
         return $value;
 
     }
-    public function preset_event_url_value($value, $post_id, $field) {
+    public function preset_event_url_defaulvalue($field) {
+        if(is_admin()){
+            $field['default_value'] = get_option('options_videoconference_default_url');
+        }
+        return $field;
+
+    }public function preset_event_url_value($value, $post_id, $field) {
         if(is_singular('group_post')){
             $value = get_permalink()."?group-space=1";
         }
@@ -84,11 +100,140 @@ class GroupBuilderFrontend {
         return ob_get_clean();
     }
 
+    public function group_events_shortcode($atts) {
+        global $post;
+        $show_link = false;
+        if(is_singular('group_post')){
+            if(is_user_logged_in() && $this->group_builder_user_can(get_the_ID(), 'edit')){
+                $show_link = true;
+            }
+            $group_id = get_the_ID();
+        }else{
+            $group_id = null;
+        }
+        //Wp_Query für Events erstellen
+        if($group_id){
+            $args = array(
+                'post_type' => 'event_post',
+                'meta_query' => array(
+                    array(
+                        'key' => 'event_group_id',
+                        'value' => $group_id,
+                        'compare' => '=',
+                    ),
+                    array(
+                        'key' => 'event_start_date',
+                        'value' => date('Y-m-d H:i:s'),
+                        'compare' => '>',
+                        'type' => 'DATETIME',
+                    ),
+                ),
+                'orderby' => 'meta_value',
+                'order' => 'ASC',
+            );
+        }else{
+            $args = array(
+                'post_type' => 'event_post',
+                'meta_query' => array(
+                    array(
+                        'key' => 'event_start_date',
+                        'value' => date('Y-m-d H:i:s'),
+                        'compare' => '>',
+                        'type' => 'DATETIME',
+                    ),
+                ),
+                'orderby' => 'meta_value',
+                'order' => 'ASC',
+            );
+        }
+        $query = new \WP_Query($args);
+
+        $html = '';
+        if ($query->have_posts()) {
+            $html .= '<ul>';
+            while ($query->have_posts()) {
+                $query->the_post();
+
+                $event_title = get_field('event_title');
+                $event_url = get_field('event_url');
+                $event_start_date = get_field('event_start_date');
+                $event_end_date = get_field('event_end_date');
+                $event_group_id = get_field('event_group_id');
+                $visible = get_field('event_visibility');
+
+
+
+
+                //Zeitzone und Locale setzen
+                setlocale(LC_TIME, 'de_DE');
+
+                $date = date('d.m.Y', strtotime($event_start_date));
+                //wochentag in deutsch
+                $weekday = date('l', strtotime($event_start_date));
+                $weekday = $this->get_german_weekday($weekday);
+
+                $time = date('H:i', strtotime($event_start_date));
+                $end_time = date('H:i', strtotime($event_end_date));
+
+                if($event_group_id && !$show_link){
+                    $show_event_link = ($this->group_builder_user_can($event_group_id, 'edit'));
+                    $extra_class = 'my-group-event';
+                }
+                if($visible == 'logged_in' && !is_user_logged_in()){
+                    $extra_class = 'member-event';
+                    $show_event_link = true;
+                }elseif ($visible == 'guest'){
+                    $extra_class = 'public-event';
+                    $show_event_link = true;
+                }
+
+                if($show_link || $show_event_link){
+                    $html .= '<li class="event-entry '.$extra_class.'">';
+                    $html .= '<div class="date-row">';
+                    $html .= '<a class="ical-picker calendar-button" title="In Kalender übernehmen" href="?ical=' . get_the_ID() . '"><span class="dashicons dashicons-calendar-alt"></span></a>';
+                    $html .= '<p class="date"><span class="weekday">' . $weekday.'</span><br>'.$date . '</p>';
+                    $html .= '</div><div class="description-row">';
+                    $html .= '<a class="event-title" href="' . $event_url . '">' . $event_title . '</a>';
+                    $html .= '<a href="' . $event_url . '" class="time">' . $time . ' - ' . $end_time . ' Uhr</a>';
+                    $html .= '</li>';
+                }else{
+
+                    $html .= '<li class="event-entry">';
+                    $html .= '<div class="date-row">';
+                    $html .= '<div class="ical-picker calendar-button" title="In Kalender übernehmen"><span class="dashicons dashicons-calendar-alt"></span></div>';
+                    $html .= '<div class="date"><span class="weekday">' . $weekday.'</span><br>'.$date . '</div>';
+                    $html .= '</div><div class="description-row">';
+                    $html .= '<p class="event-title">' . $event_title . '<br>';
+                    $html .= '<span class="time">' . $time . ' - ' . $end_time . ' Uhr</span></p>';
+                    $html .= '</li>';
+                }
+
+            }
+            $html .= '</ul>';
+
+        } else {
+            $html .= '<p>Keine Termine.</p>';
+        }
+
+        wp_reset_postdata();
+        return $html;
+    }
+    public function download_ical()
+    {
+        if (isset($_GET['ical'])) {
+            $event_id = intval($_GET['ical']);
+            $ical_content = $this->generate_ical($event_id);
+
+            if ($ical_content) {
+                header('Content-Type: text/calendar; charset=utf-8');
+                header('Content-Disposition: attachment; filename="event.ics"');
+                echo $ical_content;
+                exit;
+            }
+        }
+    }
     public function group_space_tools_shortcode()
     {
-        if(!is_user_logged_in()){
-            return '<p>Um die Tools zu sehen, musst du Mitglied dieser Gruppe und eingeloggt sein.</p>';
-        }
         if($this->group_builder_user_can(get_the_ID(), 'edit')){
             $this->read_tools();
             if(!$tools = $this->tools)
@@ -132,7 +277,28 @@ class GroupBuilderFrontend {
             $goal = get_post_meta(get_the_ID(), 'group_goal', true);
             if($goal){
                 echo '<div class="group-goal"><h2>Unser Ziel:</h2><p>'.$goal.'</p><h2>Herausforderungen und Schwerkunkte:</h2></div>';
+            }else{
+                $pin_id = get_post_meta(get_the_ID(), '_pinwall_post', true);
+                $post = get_post($pin_id);
+                $content = $post->post_content;
+                echo '<div class="group-goal"><h2>Get Started:</h2>'.
+                    '<p><strong>Willkommen!</strong><br>Gerade wurde die Gruppe gegründet. Nun kommen die nächsten Schritte...</p>' .
+                    '<ul>' .
+                    '<li>Schritt 1: Einigt Euch auf ein gemeinsames Ziel</li>' .
+                    '<li>Schritt 2: Formuliert eure Aufgaben Herausforderungen (Vielleicht mit Hilfe der Pinnwand)</li>' .
+                    '<li>Schritt 3: Verabredet den nächsten Termin</li>' .
+                    '</ul>' .
+                    '<p>Nutzt das Etherpad als für Eure Dokumentation im Meetingraum. Wenn ihr euch auf einen Termin geeinigt habt, tragt in im Formular (+ Termin ein).</p>'.
+                    '<p>Viel Erfolg beim ersten Treffen</p>'.
+                    '<hr>'.
+                    '<div>Ursprünglicher Inhalt an der Pinnwand: '.$content.'</div>'.
+                    '</div>';
+
+
+
+
             }
+
         }
     }
 
@@ -241,10 +407,17 @@ class GroupBuilderFrontend {
         $parent = '';
 
         $parent_home = $adminbar->add('', get_bloginfo('name'), home_url(), 'dashicons-admin-home');
-        if (is_user_logged_in()) {
-            $adminbar->add($parent_home, 'Leute', '/netwerk/');
+
+            $adminbar->add($parent_home, 'Marktplatz / Termine', '/');
+            $adminbar->add($parent_home, 'Pinnwand', '/pinwall_post/');
             $adminbar->add($parent_home, 'Gruppen', '/group_post/');
+            $adminbar->add($parent_home, 'Mitglieder', '/netwerk/');
+            $adminbar->add($parent_home, 'Bedienungshilfen', '/faq/');
+        if (is_user_logged_in()) {
             $adminbar->add('', 'Pinwand Karte', '/pinwand-karte-erstellen/', 'dashicons-plus');
+        }
+        if (current_user_can('administrator')) {
+            $adminbar->add($parent_home, 'Konfiguration (Admin)', admin_url().'/options-general.php?page=community-settings');
         }
         if (is_singular('pinwall_post') && is_user_logged_in()) {
             if ($this->group_builder_user_can( get_the_ID(), 'edit')) {

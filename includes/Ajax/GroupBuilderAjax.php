@@ -19,6 +19,7 @@ class GroupBuilderAjax {
         add_action('wp_ajax_toggle_join_option', [$this, 'ajax_toggle_join_option']);
         add_action('wp_ajax_generate_invite_link', [$this, 'ajax_generate_invite_link']);
 
+        add_action('save_post', [$this, 'set_random_featured_image_for_group_post']);
 
         add_filter('heartbeat_received', [$this, 'heartbeat_received'], 10, 2);
         add_filter('heartbeat_nopriv_received', [$this, 'heartbeat_received'], 10, 2);

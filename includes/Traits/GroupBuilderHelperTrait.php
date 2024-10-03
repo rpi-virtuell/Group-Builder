@@ -195,4 +195,96 @@ trait GroupBuilderHelperTrait {
 
         return false;
     }
+
+    function generate_ical($event_id) {
+        $event = get_post($event_id);
+        if (!$event || $event->post_type !== 'event_post') {
+            return false;
+        }
+
+        $event_title = get_post_meta($event_id, 'event_title', true);
+        $event_url = get_post_meta($event_id, 'event_url', true);
+        $event_start_date = get_post_meta($event_id, 'event_start_date', true);
+        $event_end_date = get_post_meta($event_id, 'event_end_date', true);
+
+        $start_timestamp = strtotime($event_start_date);
+        $end_timestamp = strtotime($event_end_date);
+
+        $ical = "BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Your Company//Your Product//EN
+BEGIN:VEVENT
+UID:" . md5($event_id) . "@yourwebsite.com
+DTSTAMP:" . gmdate('Ymd\THis\Z') . "
+DTSTART:" . gmdate('Ymd\THis\Z', $start_timestamp) . "
+DTEND:" . gmdate('Ymd\THis\Z', $end_timestamp) . "
+SUMMARY:" . $event_title . "
+DESCRIPTION:" . $event_url . "
+END:VEVENT
+END:VCALENDAR";
+
+        return $ical;
+    }
+
+    function get_german_weekday($date, $short = false) {
+        $weekday_english = date('l', strtotime($date));
+        $weekdays = array(
+            'Monday'    => ['Montag', 'Mo'],
+            'Tuesday'   => ['Dienstag', 'Di'],
+            'Wednesday' => ['Mittwoch', 'Mi'],
+            'Thursday'  => ['Donnerstag', 'Do'],
+            'Friday'    => ['Freitag', 'Fr'],
+            'Saturday'  => ['Samstag', 'Sa'],
+            'Sunday'    => ['Sonntag', 'So']
+        );
+
+        return $short ? $weekdays[$weekday_english][1] : $weekdays[$weekday_english][0];
+    }
+
+    function get_german_month($date, $short = false) {
+        $month_english = date('F', strtotime($date));
+        $months = array(
+            'January'   => ['Januar', 'Jan'],
+            'February'  => ['Februar', 'Feb'],
+            'March'     => ['März', 'Mär'],
+            'April'     => ['April', 'Apr'],
+            'May'       => ['Mai', 'Mai'],
+            'June'      => ['Juni', 'Jun'],
+            'July'      => ['Juli', 'Jul'],
+            'August'    => ['August', 'Aug'],
+            'September' => ['September', 'Sep'],
+            'October'   => ['Oktober', 'Okt'],
+            'November'  => ['November', 'Nov'],
+            'December'  => ['Dezember', 'Dez']
+        );
+
+        return $short ? $months[$month_english][1] : $months[$month_english][0];
+    }
+
+    public function set_random_featured_image_for_group_post($post_id) {
+        // Überprüfen, ob es sich um einen neuen Beitrag handelt
+        if (get_post_status($post_id) != 'publish' || get_post_type($post_id) != 'group_post') {
+            return;
+        }
+
+        // Überprüfen, ob bereits ein Artikelbild gesetzt ist
+        if (has_post_thumbnail($post_id)) {
+            return;
+        }
+
+        // Holen der Bild-IDs aus den Optionen
+        $bg_images = get_option('options_bg_images');
+
+        // Überprüfen, ob Bilder vorhanden sind
+        if (!is_array($bg_images) || empty($bg_images)) {
+            return;
+        }
+
+        // Zufälliges Bild auswählen
+        $random_image_id = $bg_images[array_rand($bg_images)];
+
+        // Artikelbild setzen
+        set_post_thumbnail($post_id, $random_image_id);
+    }
+
 }

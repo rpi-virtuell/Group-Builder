@@ -12,6 +12,21 @@
     --bordercolor: var(--theme-palette-color-2);
     --bordercolor2: var(--theme-palette-color-9);
     --gray: #d3d3d3;
+    --darkgray: #b0b0b0;
+
+    /** post-it colors **/
+    --gold: Gold;
+    --yellow: Yellow;
+    --lime: Lime;
+    --cyan: Cyan;
+    --magenta: Magenta;
+    --orange: Orange;
+    --lightcoral: LightCoral;
+    --lightsalmon: LightSalmon;
+    --lightgreen: LightGreen;
+    --lightskyblue: LightSkyBlue;
+    --lightpink: LightPink;
+    --lightgoldenrodyellow: LightGoldenRodYellow;
 
 }
 

@@ -34,6 +34,8 @@ class GroupBuilderCore {
     private function setup_actions() {
         add_action('wp_enqueue_scripts', [$this, 'enqueue_scripts'], 800);
         add_action('group_builder_cleanup', [$this, 'cleanup_orphaned_data']);
+        // Pinwwandbezüge beim Löschen einer Gruppe entfernen @todo  geht noch nicht
+        add_action('before_delete_post', [$this,'clean_associated_group_meta']);
 
         if (!wp_next_scheduled('group_builder_cleanup')) {
             wp_schedule_event(time(), 'daily', 'group_builder_cleanup');
@@ -95,5 +97,30 @@ class GroupBuilderCore {
         }
 
         wp_reset_postdata();
+    }
+
+    public function clean_associated_group_meta($post_id) {
+        // Überprüfen, ob es sich um einen group_post handelt
+        if (get_post_type($post_id) != 'group_post') {
+            return;
+        }
+
+        // Alle pinnwall_post Beiträge abrufen
+        $pinnwall_posts = get_posts(array(
+            'post_type' => 'pinnwall_post',
+            'numberposts' => -1,
+            'meta_query' => array(
+                array(
+                    'key' => '_associated_group',
+                    'value' => $post_id,
+                    'compare' => '='
+                )
+            )
+        ));
+
+        // Für jeden pinnwall_post das Meta-Feld löschen
+        foreach ($pinnwall_posts as $post) {
+            delete_post_meta($post->ID, '_associated_group', $post_id);
+        }
     }
 }
