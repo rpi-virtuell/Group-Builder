@@ -21,6 +21,7 @@ class GroupBuilderFrontend {
         add_shortcode('group_edit_form', [$this, 'group_edit_form_shortcode']);
         add_shortcode('group_space_tools', [$this, 'group_space_tools_shortcode']);
         add_shortcode('group_events', [$this, 'group_events_shortcode']);
+        add_shortcode('element_channel', [$this, 'martrix_url_shortcode']);
     }
 
     private function setup_frontend_actions() {
@@ -70,7 +71,8 @@ class GroupBuilderFrontend {
         }
         return $field;
 
-    }public function preset_event_url_value($value, $post_id, $field) {
+    }
+    public function preset_event_url_value($value, $post_id, $field) {
         if(is_singular('group_post')){
             $value = get_permalink()."?group-space=1";
         }
@@ -98,6 +100,18 @@ class GroupBuilderFrontend {
         ob_start();
         acfe_form('edit_group');
         return ob_get_clean();
+    }
+
+    public function martrix_url_shortcode() {
+        $matrix_url = get_option('options_matrix_plenum_url');
+        $template = get_option('options_martrix-widget-content');
+
+        if ($matrix_url && $template) {
+            $template = str_replace('%url%',$matrix_url,$template);
+
+            return $template;
+        }
+        return '';
     }
 
     public function group_events_shortcode($atts) {
@@ -281,18 +295,11 @@ class GroupBuilderFrontend {
                 $pin_id = get_post_meta(get_the_ID(), '_pinwall_post', true);
                 $post = get_post($pin_id);
                 $content = $post->post_content;
-                echo '<div class="group-goal"><h2>Get Started:</h2>'.
-                    '<p><strong>Willkommen!</strong><br>Gerade wurde die Gruppe gegründet. Nun kommen die nächsten Schritte...</p>' .
-                    '<ul>' .
-                    '<li>Schritt 1: Einigt Euch auf ein gemeinsames Ziel</li>' .
-                    '<li>Schritt 2: Formuliert eure Aufgaben Herausforderungen (Vielleicht mit Hilfe der Pinnwand)</li>' .
-                    '<li>Schritt 3: Verabredet den nächsten Termin</li>' .
-                    '</ul>' .
-                    '<p>Nutzt das Etherpad als für Eure Dokumentation im Meetingraum. Wenn ihr euch auf einen Termin geeinigt habt, tragt in im Formular (+ Termin ein).</p>'.
-                    '<p>Viel Erfolg beim ersten Treffen</p>'.
-                    '<hr>'.
-                    '<div>Ursprünglicher Inhalt an der Pinnwand: '.$content.'</div>'.
-                    '</div>';
+                $template = get_option('options_group_welcome_template');
+                if($template){
+                    $template = str_replace('%pin%', $content, $template);
+                }
+                echo $template;
 
 
 

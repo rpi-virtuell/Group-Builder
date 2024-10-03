@@ -107,7 +107,7 @@ class GroupBuilderCore {
 
         // Alle pinnwall_post Beiträge abrufen
         $pinnwall_posts = get_posts(array(
-            'post_type' => 'pinnwall_post',
+            'post_type' => 'pinwall_post',
             'numberposts' => -1,
             'meta_query' => array(
                 array(

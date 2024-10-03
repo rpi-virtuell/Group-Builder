@@ -261,6 +261,23 @@ END:VCALENDAR";
         return $short ? $months[$month_english][1] : $months[$month_english][0];
     }
 
+    public function ensure_comments_enabled($post_id) {
+        // Überprüfen, ob es sich um einen relevanten Post-Typ handelt
+        $post_type = get_post_type($post_id);
+        if (!in_array($post_type, ['group_post', 'pinwall_post'])) {
+            return;
+        }
+
+        // Kommentarstatus auf "offen" setzen
+        $post_data = array(
+            'ID' => $post_id,
+            'comment_status' => 'open'
+        );
+
+        // Beitrag aktualisieren
+        wp_update_post($post_data);
+    }
+
     public function set_random_featured_image_for_group_post($post_id) {
         // Überprüfen, ob es sich um einen neuen Beitrag handelt
         if (get_post_status($post_id) != 'publish' || get_post_type($post_id) != 'group_post') {

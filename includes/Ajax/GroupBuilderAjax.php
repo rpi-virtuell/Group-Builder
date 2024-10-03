@@ -21,6 +21,16 @@ class GroupBuilderAjax {
 
         add_action('save_post', [$this, 'set_random_featured_image_for_group_post']);
 
+        // Hook für das Speichern eines Beitrags
+        add_action('save_post', [$this,'ensure_comments_enabled'], 20, 1);
+
+        // Hook für das Veröffentlichen eines Beitrags
+        add_action('publish_post', [$this,'ensure_comments_enabled'], 20, 1);
+
+        // Spezifische Hooks für unsere Custom Post Types
+        add_action('publish_group_post', [$this,'ensure_comments_enabled'], 20, 1);
+        add_action('publish_pinnwall_post', [$this,'ensure_comments_enabled'], 20, 1);
+
         add_filter('heartbeat_received', [$this, 'heartbeat_received'], 10, 2);
         add_filter('heartbeat_nopriv_received', [$this, 'heartbeat_received'], 10, 2);
     }
