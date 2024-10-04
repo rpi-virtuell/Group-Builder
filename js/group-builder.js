@@ -219,7 +219,7 @@ jQuery(document).ready(function($) {
         .css('background-repeat', 'no-repeat')
         .css('background-position', 'center center')
         .css('padding-top','70px');
-    jQuery("a.ct-menu-link:contains('Pinwand')")
+    jQuery("a.ct-menu-link:contains('Pinnwand')")
         .css('background-image',"url('/wp-content/uploads/assets/pinnwand.png')")
         .css('background-size','50px')
         .css('background-repeat', 'no-repeat')

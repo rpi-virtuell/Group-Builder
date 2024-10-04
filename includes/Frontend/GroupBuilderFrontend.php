@@ -290,7 +290,7 @@ class GroupBuilderFrontend {
         if(is_singular(['group_post'])){
             $goal = get_post_meta(get_the_ID(), 'group_goal', true);
             if($goal){
-                echo '<div class="group-goal"><h2>Unser Ziel:</h2><p>'.$goal.'</p><h2>Herausforderungen und Schwerkunkte:</h2></div>';
+                echo '<div class="group-goal"><h2>Unser Ziel:</h2><p>'.$goal.'</p><h2>Herausforderungen und Schwerpunkte:</h2></div>';
             }else{
                 $pin_id = get_post_meta(get_the_ID(), '_pinwall_post', true);
                 $post = get_post($pin_id);
@@ -418,7 +418,7 @@ class GroupBuilderFrontend {
             $adminbar->add($parent_home, 'Marktplatz / Termine', '/');
             $adminbar->add($parent_home, 'Pinnwand', '/pinwall_post/');
             $adminbar->add($parent_home, 'Gruppen', '/group_post/');
-            $adminbar->add($parent_home, 'Mitglieder', '/netwerk/');
+            $adminbar->add($parent_home, 'Mitglieder', '/netzwerk/');
             $adminbar->add($parent_home, 'Bedienungshilfen', '/faq/');
         if (is_user_logged_in()) {
             $adminbar->add('', 'Pinwand Karte', '/pinwand-karte-erstellen/', 'dashicons-plus');

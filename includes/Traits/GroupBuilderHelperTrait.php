@@ -226,6 +226,27 @@ END:VCALENDAR";
         return $ical;
     }
 
+
+    public function send_message_to_group_member($group_id, $subject, $message) {
+        $group_members = get_post_meta($group_id, '_group_members', true);
+        if (!is_array($group_members)) {
+            return;
+        }
+        foreach ($group_members as $user_id) {
+            $message = array(
+                'message_title' => $subject,
+                'message_content'   =>  $message,
+                'message_to_id' => $user_id, //Receiver id
+            );
+
+            $message_id = fep_send_message( $message );
+
+            do_action('group_builder_send_message_to_group_member', $group_id, $subject, $message, $message_id);
+
+        }
+
+    }
+
     function get_german_weekday($date, $short = false) {
         $weekday_english = date('l', strtotime($date));
         $weekdays = array(
@@ -262,6 +283,7 @@ END:VCALENDAR";
     }
 
     public function ensure_comments_enabled($post_id) {
+        return;
         // Überprüfen, ob es sich um einen relevanten Post-Typ handelt
         $post_type = get_post_type($post_id);
         if (!in_array($post_type, ['group_post', 'pinwall_post'])) {
