@@ -33,9 +33,9 @@ class GroupBuilderCore {
 
     private function setup_actions() {
         add_action('wp_enqueue_scripts', [$this, 'enqueue_scripts'], 800);
-        add_action('group_builder_cleanup', [$this, 'cleanup_orphaned_data']);
+        //add_action('group_builder_cleanup', [$this, 'cleanup_orphaned_data']);
         // Pinwwandbezüge beim Löschen einer Gruppe entfernen @todo  geht noch nicht
-        add_action('before_delete_post', [$this,'clean_associated_group_meta']);
+        //add_action('before_delete_post', [$this,'clean_associated_group_meta']);
 
         if (!wp_next_scheduled('group_builder_cleanup')) {
             wp_schedule_event(time(), 'daily', 'group_builder_cleanup');

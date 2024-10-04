@@ -267,6 +267,9 @@ END:VCALENDAR";
         if (!in_array($post_type, ['group_post', 'pinwall_post'])) {
             return;
         }
+        if($post_status = get_post_status($post_id) !== 'publish'){
+            return;
+        }
 
         // Kommentarstatus auf "offen" setzen
         $post_data = array(

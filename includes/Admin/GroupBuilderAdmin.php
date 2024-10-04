@@ -7,11 +7,12 @@ class GroupBuilderAdmin {
     }
 
     private function setup_admin_actions() {
-        add_action('admin_init', [$this, 'register_settings']);
+        #add_action('admin_init', [$this, 'register_settings']);
     }
 
 
     public function register_settings() {
+
     }
 
 }
