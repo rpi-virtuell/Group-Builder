@@ -8,11 +8,15 @@
     grid-template-columns: 1fr;
 
 }
-/*.entry-card.card-content.pinwall_post {*/
-/*    display: grid;*/
-/*    grid-template-columns: 1fr;*/
-/*    grid-template-rows: minmax(20px,1fr);*/
-/*}*/
+.entry-card.card-content.pinwall_post {
+     position: relative;
+}
+.entry-card.type-pinwall_post::before {
+    content: "\f109";
+    font: 40px/1 dashicons;
+    position: absolute;
+    right: 25px;
+}
 
 .attendees {
     margin-top: 0px;
@@ -580,6 +584,13 @@ a.ct-menu-link {
 .um-members-pagination-box span.current {
     background-color: var(--buttoncolor)!important;
 }
+.um-member-directory-search-line{
+    margin-bottom: 20px ;
+}
+.um-member-directory-search-line input, .um-member-directory-search-line button{
+    border-radius: 3px!important;
+    padding: 14px !important;;
+}
 
 /** Termine **/
 .event-entry {
@@ -631,4 +642,35 @@ a.ct-menu-link {
 }
 .event-entry .time{
     /*font-weight: bold;*/
+}
+@media screen and (max-width: 782px) {
+    .event-entry .date-row {
+        margin-bottom: 0px;
+        grid-template-columns: 40px auto;
+    }
+    .event-entry .dashicons {
+        font-size: 50px;
+    }
+    .event-entry .date{
+        font-size: 20px;
+        line-height: 18px;
+        letter-spacing: 0;
+    }
+    .event-entry .weekday{
+        font-size: 18px;
+    }
+
+}
+
+/** Comments **/
+.sce-edit-comment .sce-timer, .sce-edit-comment .sce-seperator {
+    display: none;
+}
+.sce-comment-edit-buttons-group button.sce-comment-save {
+    background-color: var(--buttoncolor)!important;
+    color: var(--buttontext)!important;;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+
 }

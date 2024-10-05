@@ -22,6 +22,15 @@ class GroupBuilderFrontend {
         add_shortcode('group_space_tools', [$this, 'group_space_tools_shortcode']);
         add_shortcode('group_events', [$this, 'group_events_shortcode']);
         add_shortcode('element_channel', [$this, 'martrix_url_shortcode']);
+        add_shortcode('faq_button', [$this, 'faq_button_shortcode']);
+    }
+
+    public function faq_button_shortcode()
+    {
+        if(is_singular('group_post')) {
+            return '';
+        }
+        return get_option('options_faq_button','<a class="button" href="/faq/" class="faq-button">Wie funktioniert das?</a>');
     }
 
     private function setup_frontend_actions() {
@@ -33,6 +42,9 @@ class GroupBuilderFrontend {
         add_action('blocksy:comments:top', [$this, 'comments_header']);
 
         add_action('admin_bar_menu', [$this, 'set_adminbar'], 10000);
+
+        add_action('wp', [$this,'hide_comment_form_for_non_member']);
+        add_filter('comments_open', [$this,'hide_comments_for_non_member'], 10, 2);
 
 
         add_filter('acf/load_value/name=event_group_id', [$this,'preset_event_group_id_value'], 10,3);
@@ -413,15 +425,16 @@ class GroupBuilderFrontend {
         $adminbar->add('user-actions', 'Abmelden', wp_logout_url(), 'dashicons-exit');
         $parent = '';
 
-        $parent_home = $adminbar->add('', get_bloginfo('name'), home_url(), 'dashicons-admin-home');
+        $parent_home = $adminbar->add('', get_bloginfo('name'), home_url(), 'dashicons-location');
 
             $adminbar->add($parent_home, 'Marktplatz / Termine', '/');
             $adminbar->add($parent_home, 'Pinnwand', '/pinwall_post/');
             $adminbar->add($parent_home, 'Gruppen', '/group_post/');
             $adminbar->add($parent_home, 'Mitglieder', '/netzwerk/');
+            $adminbar->add($parent_home, 'Dokumente', '/dokument/');
             $adminbar->add($parent_home, 'Bedienungshilfen', '/faq/');
         if (is_user_logged_in()) {
-            $adminbar->add('', 'Pinwand Karte', '/pinwand-karte-erstellen/', 'dashicons-plus');
+            $adminbar->add('', '+ Pinnwand-Karte', '/pinnwand-karte-erstellen/', 'dashicons-admin-post');
         }
         if (current_user_can('administrator')) {
             $adminbar->add($parent_home, 'Konfiguration (Admin)', admin_url().'/options-general.php?page=community-settings');
@@ -540,4 +553,35 @@ class GroupBuilderFrontend {
             <?php
         }
     }
+    // Funktion zum Ausblenden des Kommentarbereichs
+    function hide_comments_for_non_member($open, $post_id) {
+        // Überprüfen, ob der Benutzer angemeldet ist
+        if (!$this->group_builder_user_can($post_id, 'edit')) {
+            // Hole den Post-Typ
+            $post = get_post($post_id);
+
+            // Überprüfen, ob es sich um den gewünschten post_type handelt (z.B. 'your_post_type')
+            if ($post->post_type == 'group_post') {
+                return false; // Schließt den Kommentarbereich
+            }
+        }
+        return $open; // Gibt den ursprünglichen Wert zurück
+    }
+
+    // Kommentarformular ausblenden, wenn der Benutzer nicht angemeldet ist
+    function hide_comment_form_for_non_member() {
+        // Überprüfen, ob der Benutzer nicht angemeldet ist
+        if (!$this->group_builder_user_can(get_the_ID(), 'edit')) {
+            // Hole den aktuellen Post
+            $type = get_post_type(get_the_ID());
+
+            // Überprüfen, ob es sich um den gewünschten post_type handelt (z.B. 'your_post_type')
+            if ($type == 'group_post') {
+                // Kommentarformular ausblenden
+                remove_action('comment_form', 'comment_form', 10);
+            }
+        }
+    }
+
+
 }

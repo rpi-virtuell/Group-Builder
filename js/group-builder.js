@@ -212,31 +212,38 @@ jQuery(document).ready(function($) {
 
     $('.ct-comments-title').html('Beiträge');
 
+
     // Todo: Image Pfade für die Menüpunkte anpassen aus dem Pluginpfad ./images/ holen
-    jQuery("a.ct-menu-link:contains('Startseite')")
-        .css('background-image',"url('/wp-content/uploads/assets/markt.png')")
-        .css('background-size','50px')
-        .css('background-repeat', 'no-repeat')
-        .css('background-position', 'center center')
-        .css('padding-top','70px');
-    jQuery("a.ct-menu-link:contains('Pinnwand')")
-        .css('background-image',"url('/wp-content/uploads/assets/pinnwand.png')")
-        .css('background-size','50px')
-        .css('background-repeat', 'no-repeat')
-        .css('background-position', 'center center')
-        .css('padding-top','70px');
-    jQuery("a.ct-menu-link:contains('Gruppen')")
-        .css('background-image',"url('/wp-content/uploads/assets/gruppe.png')")
-        .css('background-size','50px')
-        .css('background-repeat', 'no-repeat')
-        .css('background-position', 'center center')
-        .css('padding-top','70px');
-    jQuery("a.ct-menu-link:contains('Mitglieder')")
-        .css('background-image',"url('/wp-content/uploads/assets/netzwerk.png')")
-        .css('background-size','50px')
-        .css('background-repeat', 'no-repeat')
-        .css('background-position', 'center center')
-        .css('padding-top','70px');
+    // jQuery("a.ct-menu-link:contains('Startseite')")
+    //     .css('background-image',"url('/wp-content/uploads/assets/markt.png')")
+    //     .css('background-size','50px')
+    //     .css('background-repeat', 'no-repeat')
+    //     .css('background-position', 'center center')
+    //     .css('padding-top','70px');
+    // jQuery("a.ct-menu-link:contains('Pinnwand')")
+    //     .css('background-image',"url('/wp-content/uploads/assets/pinnwand.png')")
+    //     .css('background-size','50px')
+    //     .css('background-repeat', 'no-repeat')
+    //     .css('background-position', 'center center')
+    //     .css('padding-top','70px');
+    // jQuery("a.ct-menu-link:contains('Gruppen')")
+    //     .css('background-image',"url('/wp-content/uploads/assets/gruppe.png')")
+    //     .css('background-size','50px')
+    //     .css('background-repeat', 'no-repeat')
+    //     .css('background-position', 'center center')
+    //     .css('padding-top','70px');
+    // jQuery("a.ct-menu-link:contains('Mitglieder')")
+    //     .css('background-image',"url('/wp-content/uploads/assets/netzwerk.png')")
+    //     .css('background-size','50px')
+    //     .css('background-repeat', 'no-repeat')
+    //     .css('background-position', 'center center')
+    //     .css('padding-top','70px');
+    // jQuery("a.ct-menu-link:contains('Dokumente')")
+    //     .css('background-image',"url('/wp-content/uploads/assets/library.png')")
+    //     .css('background-size','50px')
+    //     .css('background-repeat', 'no-repeat')
+    //     .css('background-position', 'center center')
+    //     .css('padding-top','70px');
 
     // Datepicker für Event-Start- und Enddatum synchronisieren
     $('.acf-field[data-name="event_start_date"]').on('change',function(e, $el){
