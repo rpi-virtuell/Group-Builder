@@ -4,6 +4,7 @@ namespace GroupBuilder\Integrations;
 class GroupBuilderIntegrations {
     public function __construct() {
         $this->setup_integrations();
+        add_filter('pre_get_comments', [$this,'filter_comments_by_post_type']);
     }
 
     private function setup_integrations() {
@@ -12,6 +13,14 @@ class GroupBuilderIntegrations {
         add_action('um_profile_content_group-builder', [$this, 'ultimate_member_integration_content']);
         add_filter('um_profile_query_make_posts', [$this, 'ultimate_member_integration_profile_query_make_posts'], 10, 1);
         add_action( 'um_members_after_user_name', [$this, 'ultimate_member_meta'], 10 );
+    }
+
+    public function filter_comments_by_post_type($query) {
+        if (!is_admin()) {
+            $post_types = array('pinwall_post', 'post', 'document_post'); // Hier die gewünschten Post-Types eintragen
+            $query->query_vars['post_type'] = $post_types;
+        }
+        return $query;
     }
 
     /**
@@ -69,10 +78,15 @@ class GroupBuilderIntegrations {
             )
         );
         $groups = get_posts($args);
-        echo '<ul class="group-list">';
+        echo '<div class="um-group-list"><strong>Mitglied in folgenden Gruppen:</strong><br><br>';
         foreach ($groups as $group) {
             echo
-            '<li class="assoziated-group-link"><a href="'.get_permalink($group->ID).'"><span class="dashicons dashicons-groups"></span>'.$group->post_title.'</a></li>';
+            '<div class="assoziated-group-link">' .
+            '<a href="'.get_permalink($group->ID).'"><span class="dashicons dashicons-groups"></span>'.$group->post_title.'</a>' .
+            '<br>' .
+            '<div class="group-goal">' . get_post_meta($group->ID, 'group_goal', true) . '</div>' .
+            '<hr>'.
+            '</div>';
         }
         echo '</ul>';
     }

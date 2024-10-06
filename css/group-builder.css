@@ -60,6 +60,20 @@
     margin-bottom: 20px!important;
     margin-left: -25px;
 }
+.um-group-list {
+
+    margin-bottom: 20px!important;
+    margin-left: 20px;
+    padding: 0;
+}
+.um-group-list strong {
+    margin-left: -10px;
+}
+
+.um-group-list .group-goal {
+    margin-left: 37px;
+
+}
 
 .assoziated-groups {
     list-style: none;
@@ -591,8 +605,16 @@ a.ct-menu-link {
     border-radius: 3px!important;
     padding: 14px !important;;
 }
+.um-field.um-field-export_data {
+    display: none;
+}
 
 /** Termine **/
+.main-events-lists {
+    max-height: 450px;
+    overflow: auto;
+}
+
 .event-entry {
     display: block;
     grid-template-columns: 1fr 1fr;
@@ -673,4 +695,10 @@ a.ct-menu-link {
     padding: 5px 10px;
     cursor: pointer;
 
+}
+
+
+#invite-message-container {
+    margin: 50px;
+    font-size: 2em;
 }

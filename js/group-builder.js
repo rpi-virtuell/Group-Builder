@@ -182,6 +182,13 @@ jQuery(document).ready(function($) {
         copy_to_clipboard('invite-link');
     });
 
+    // Einladung kopieren
+    $(document).on('click', '.copy-invite-message', function(e) {
+        e.preventDefault();
+        $('#invite-message-container').html($('#invite-message').val());
+        copy_to_clipboard('invite-message');
+    });
+
     // Einladungslink generieren
     $(document).on('click', '.generate-invite-link', function(e) {
         e.preventDefault();
@@ -256,6 +263,8 @@ jQuery(document).ready(function($) {
         });
     });
 
-    console.log($('.acf-field[data-name="event_start_date"] .input-alt'));
+    if(group_builder_group.is_member==='no'){
+        $('#comments').remove();
+    }
 });
 

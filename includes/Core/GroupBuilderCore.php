@@ -40,13 +40,20 @@ class GroupBuilderCore {
         if (!wp_next_scheduled('group_builder_cleanup')) {
             wp_schedule_event(time(), 'daily', 'group_builder_cleanup');
         }
+
+
     }
 
+
     public function enqueue_scripts() {
+        if(is_singular('group_post')) {
+           $is_member = $this->group_builder_user_can('edit_group')? 'yes' : 'no';
+        }
         wp_enqueue_script('group-builder-js', plugin_dir_url(__FILE__) . '../../js/group-builder.js', array('jquery'), '1.0', true);
         wp_enqueue_style('group-builder-css', plugin_dir_url(__FILE__) . '../../css/colors.css');
         wp_enqueue_style('group-builder-colors-css', plugin_dir_url(__FILE__) . '../../css/group-builder.css');
         wp_localize_script('group-builder-js', 'group_builder_ajax', array('ajax_url' => admin_url('admin-ajax.php')));
+        wp_localize_script('group-builder-js', 'group_builder_group', array('is_member' => $is_member));
         wp_enqueue_style('dashicons');
         wp_enqueue_script('heartbeat');
     }

@@ -54,6 +54,7 @@ class GroupBuilderFrontend {
         add_filter('acf/load_field/name=event_visibility', [$this,'preset_event_visibility_value'], 10,1);
 
         add_action('init', [$this,'download_ical']);
+        add_action('init', [$this,'set_user_meta_from_url'],1);
     }
 
     public function preset_event_visibility_value($field) {
@@ -90,6 +91,19 @@ class GroupBuilderFrontend {
         }
         return $value;
 
+    }
+    /**
+     * Session Replacement
+     */
+    public function set_user_meta_from_url()
+    {
+        //Wenn ein Invite-Code in der URL übergeben wurde, wird dieser in das User-Meta-Feld "_group_user_invite_code" geschrieben
+        //dies ermöglicht etwa, den Invite-Code auch im Ajax-Requests zu verwenden
+        if(isset($_GET['invite'])){
+            $invite = preg_replace('/[^a-zA-Z0-9]/', '', $_GET['invite']);
+            $user_id =get_current_user_id();
+            update_user_meta($user_id, '_group_user_invite_code', $invite);
+        }
     }
 
     public function group_members_shortcode($atts) {
@@ -176,7 +190,7 @@ class GroupBuilderFrontend {
 
         $html = '';
         if ($query->have_posts()) {
-            $html .= '<ul>';
+            $html .= '<ul class="main-events-lists">';
             while ($query->have_posts()) {
                 $query->the_post();
 
@@ -458,6 +472,19 @@ class GroupBuilderFrontend {
                 }else{
                     $group_edit = $adminbar->addMegaMenu($parent, 'Gruppe bearbeiten', 'group-edit-modal', 'dashicons-edit');
                     $meeting = $adminbar->add($parent, 'Meeting', '?group-space=1', 'dashicons-welcome-learn-more');
+                    $join_option = get_post_meta(get_the_ID(), '_join_option', true);
+
+                    if($join_option) {
+                        $inviter = '<h1>Einladung zur Gruppe kopieren</h1>';
+                        $inviter .= '<p>Um andere Mitglieder in diese Gruppe einzuladen, kopiere die Nachricht und füge sie in eine Mail an einen User ein.</p>';
+                        $inviter .= '<div class="copy-invite-link-wrapper">';
+                        $inviter .= '<span class="copy-invite-message-label">Einladungsnachricht für weitere Mitglieder:</span><button class="button copy-invite-message" data-post-id="' . get_the_ID() . '">Einladung kopieren</button></div>';
+                        $inviter .= '<div id="invite-message-container"></div>';
+                        $inviter .= '</div>';
+
+                        $adminbar->addMegaMenu($group_edit, 'Einladelink', 'group-invite-modal', 'dashicons-email');
+                        $adminbar->addMegaMenuContent('group-invite-modal', $inviter);
+                    }
                     $adminbar->addMegaMenu($group_edit, 'Integrationen', 'group-tools-modal', 'dashicons-admin-generic');
                 }
                 $adminbar->addMegaMenu($parent, '+ Termin', 'group-events-modal', 'dashicons-calendar');
@@ -493,9 +520,11 @@ class GroupBuilderFrontend {
 
         if($join_option){
             $link = $this->get_invite_link($group_id);
+            $message = $this->get_invite_message($group_id);
             echo '<div class="copy-invite-link-wrapper">';
             echo '<span class="copy-invite-link-label">Weitere Mitglieder einladen:</span><button class="button copy-invite-link" data-post-id="' . $group_id . '">Einladungslink kopieren</button></div>';
             echo '<div style="display: none"><input type="text" name="invite-link" id="invite-link" value="' . $link . '">';
+            echo '<input type="text" name="invite-message" id="invite-message" value="' . $message . '">';
             echo '</div>';
         }
 
@@ -571,12 +600,14 @@ class GroupBuilderFrontend {
     // Kommentarformular ausblenden, wenn der Benutzer nicht angemeldet ist
     function hide_comment_form_for_non_member() {
         // Überprüfen, ob der Benutzer nicht angemeldet ist
+        error_log('hide_comment_form_for_non_member');
         if (!$this->group_builder_user_can(get_the_ID(), 'edit')) {
             // Hole den aktuellen Post
             $type = get_post_type(get_the_ID());
 
             // Überprüfen, ob es sich um den gewünschten post_type handelt (z.B. 'your_post_type')
             if ($type == 'group_post') {
+                error_log('remove_action comment_form');
                 // Kommentarformular ausblenden
                 remove_action('comment_form', 'comment_form', 10);
             }

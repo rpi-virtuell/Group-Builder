@@ -15,6 +15,18 @@ trait GroupBuilderHelperTrait {
         $max_members = apply_filters('options_group_builder_max_members', get_option('options_group_builder_max_members', 10));
         return count($members) < $max_members;
     }
+    public function get_invite_message($group_id = null) {
+        $link = $this->get_invite_link($group_id);
+        if (!$link) {
+            return 'Fehler: Gruppenlink konnte nicht erstellt werden';
+        }
+        $group_name = get_the_title($group_id);
+        $message = 'Hallo, ich möchte zu unsere Arbeitsgruppe einladen und habe dir einen Link geschickt.'; ;
+        $message .= "<br><a href='$link'>$group_name</a><br>";
+        $message .= "Klicke dort auf den \"Gruppe beitreten\" Button.";
+        return $message;
+
+    }
 
     public function get_invite_link($group_id = null) {
         if (!$group_id) {
@@ -75,9 +87,7 @@ trait GroupBuilderHelperTrait {
         }
         $output .= '<div class="attendees-wrapper">';
 
-        if($post_type === 'group_post'){
-            //$output .= '<p class="attendees-label">Mitglieder</p>';
-        } else {
+        if($post_type === 'pinwall_post'){
             if ($has_groups) {
                 $output .= '<p class="attendees-label">Interesse an weiterer Gruppe?</p>';
             } else {
@@ -147,19 +157,27 @@ trait GroupBuilderHelperTrait {
             }
         } elseif ($group_id) {
             $members = get_post_meta($group_id, '_group_members', true);
+            $join_on_invitation = get_post_meta($group_id, '_join_option', true);
+
+
             if (!is_array($members)) {
                 $members = array();
             }
             if(get_option('options_group_builder_avatar_actions')) {
+
                 if (in_array($current_user_id, $members)) {
                     $buttons .= sprintf($button_template, 'leave-group', $group_id, 'Gruppe verlassen',$leave_svg);
                 } else {
-                    if (count($members) < get_option('options_group_builder_max_members', 4)) {
-                        $buttons .= sprintf($button_template, 'join-group', $group_id, 'Gruppe beitreten',$join_svg);
+
+                    error_log($this->group_builder_user_can($group_id, 'join')? 'true' : 'false');
+                    if (count($members) < get_option('options_group_builder_max_members', 4) && !$join_on_invitation) {
+                        $buttons .= sprintf($button_template, 'join-group', $group_id, 'Gruppe beitreten', $join_svg);
+                    }elseif($this->group_builder_user_can($group_id, 'join')){
+                        $buttons .= sprintf($button_template, 'join-group', $group_id, 'Gruppe beitreten', $join_svg);
                     }
                 }
             }
-
+            error_log('buttons: ' . htmlentities($buttons));
         }
 
         return [$buttons, $create_button];
@@ -182,7 +200,8 @@ trait GroupBuilderHelperTrait {
             }
             $join_option = get_post_meta($post_id, '_join_option', true);
             $hash = get_post_meta($post_id, '_invite_hash', true);
-            return !$join_option || (isset($_GET['invite']) && $hash === $_GET['invite']);
+            $invite = get_user_meta($current_user_id, '_group_user_invite_code', true);
+            return !$join_option || $hash === $invite;
         }
 
         if (!is_array($group_members)) {
