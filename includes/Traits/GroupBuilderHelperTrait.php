@@ -169,10 +169,8 @@ trait GroupBuilderHelperTrait {
                     $buttons .= sprintf($button_template, 'leave-group', $group_id, 'Gruppe verlassen',$leave_svg);
                 } else {
 
-                    error_log($this->group_builder_user_can($group_id, 'join')? 'true' : 'false');
-                    if (count($members) < get_option('options_group_builder_max_members', 4) && !$join_on_invitation) {
-                        $buttons .= sprintf($button_template, 'join-group', $group_id, 'Gruppe beitreten', $join_svg);
-                    }elseif($this->group_builder_user_can($group_id, 'join')){
+                    $user_can_join = $this->group_builder_user_can($group_id, 'join');
+                    if ($user_can_join) {
                         $buttons .= sprintf($button_template, 'join-group', $group_id, 'Gruppe beitreten', $join_svg);
                     }
                 }
@@ -198,10 +196,26 @@ trait GroupBuilderHelperTrait {
             if (is_array($group_members) && in_array($current_user_id, $group_members)) {
                 return false;
             }
+            $slots_free = false;
             $join_option = get_post_meta($post_id, '_join_option', true);
-            $hash = get_post_meta($post_id, '_invite_hash', true);
-            $invite = get_user_meta($current_user_id, '_group_user_invite_code', true);
-            return !$join_option || $hash === $invite;
+
+            $members = get_post_meta($post_id, '_group_members', true);
+            $max_members = get_option('options_group_builder_max_members', 4);
+            if(count($members) <= $max_members){
+                $slots_free = true;
+            }
+            if($join_option){
+                $hash = get_post_meta($post_id, '_invite_hash', true);
+                $invite = get_user_meta($current_user_id, '_group_user_invite_code', true);
+            }
+
+            if($slots_free && !$join_option){
+                return true;
+            }elseif($join_option && $hash === $invite){
+                return true;
+
+            }
+            return false;
         }
 
         if (!is_array($group_members)) {

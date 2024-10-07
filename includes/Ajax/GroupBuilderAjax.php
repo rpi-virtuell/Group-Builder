@@ -178,7 +178,7 @@ class GroupBuilderAjax {
         }
 
         if (!in_array($user_id, $members)) {
-            if ($this->check_group_limit($group_id)) {
+            if ($this->group_builder_user_can($group_id, 'join')) {
                 $members[] = $user_id;
                 update_post_meta($group_id, '_group_members', $members);
                 $this->update_change_timestamp($group_id);
