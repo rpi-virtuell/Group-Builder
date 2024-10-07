@@ -143,9 +143,11 @@ class GroupBuilderFrontend {
     public function group_events_shortcode($atts) {
         global $post;
         $show_link = false;
+        $show_delete_link = false;
         if(is_singular('group_post')){
             if(is_user_logged_in() && $this->group_builder_user_can(get_the_ID(), 'edit')){
                 $show_link = true;
+                $show_delete_link = true;
             }
             $group_id = get_the_ID();
         }else{
@@ -200,7 +202,7 @@ class GroupBuilderFrontend {
                 $event_end_date = get_field('event_end_date');
                 $event_group_id = get_field('event_group_id');
                 $visible = get_field('event_visibility');
-
+                $show_event_link = false;
 
 
 
@@ -218,6 +220,10 @@ class GroupBuilderFrontend {
                 if($event_group_id && !$show_link){
                     $show_event_link = ($this->group_builder_user_can($event_group_id, 'edit'));
                     $extra_class = 'my-group-event';
+                    $show_delete_link = true;
+                }
+                if (current_user_can('edit_posts')) {
+                    $show_delete_link = true;
                 }
                 if($visible == 'logged_in' && !is_user_logged_in()){
                     $extra_class = 'member-event';
@@ -228,10 +234,13 @@ class GroupBuilderFrontend {
                 }
 
                 if($show_link || $show_event_link){
-                    $html .= '<li class="event-entry '.$extra_class.'">';
+                    $html .= '<li class="event-entry ' . $extra_class . '">';
+                    if($show_delete_link){
+                        $html .= '<a title="Termin löschen" href="#" class="delete-event" data-event-id="' . get_the_ID() . '"><span class="dashicons dashicons-trash"></span></a>';
+                    }
                     $html .= '<div class="date-row">';
                     $html .= '<a class="ical-picker calendar-button" title="In Kalender übernehmen" href="?ical=' . get_the_ID() . '"><span class="dashicons dashicons-calendar-alt"></span></a>';
-                    $html .= '<p class="date"><span class="weekday">' . $weekday.'</span><br>'.$date . '</p>';
+                    $html .= '<p class="date"><span class="weekday">' . $weekday . '</span><br>' . $date . '</p>';
                     $html .= '</div><div class="description-row">';
                     $html .= '<a class="event-title" href="' . $event_url . '">' . $event_title . '</a>';
                     $html .= '<a href="' . $event_url . '" class="time">' . $time . ' - ' . $end_time . ' Uhr</a>';

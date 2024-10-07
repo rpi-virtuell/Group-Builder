@@ -216,6 +216,30 @@ jQuery(document).ready(function($) {
             }
         });
     });
+    // Termin löschen
+    $(document).on("click", ".delete-event", function(e) {
+        e.preventDefault();
+        if (confirm("Möchtest du diesen Termin wirklich löschen?")) {
+            var eventId = $(this).data("event-id");
+            $.ajax({
+                url: group_builder_ajax.ajax_url,
+                type: "POST",
+                data: {
+                    action: "delete_event",
+                    event_id: eventId
+                },
+                success: function(response) {
+                    if (response.success) {
+                        alert("Der Termin wurde gelöscht.");
+                        location.reload();
+                    } else {
+                        alert("Fehler beim Löschen des Termins.");
+                    }
+                }
+            });
+        }
+    });
+
 
     $('.ct-comments-title').html('Beiträge');
 

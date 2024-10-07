@@ -18,6 +18,7 @@ class GroupBuilderAjax {
         add_action('wp_ajax_join_group', [$this, 'ajax_join_group']);
         add_action('wp_ajax_toggle_join_option', [$this, 'ajax_toggle_join_option']);
         add_action('wp_ajax_generate_invite_link', [$this, 'ajax_generate_invite_link']);
+        add_action('wp_ajax_delete_event', [$this,'delete_event_callback']);
 
         add_action('save_post', [$this, 'set_random_featured_image_for_group_post']);
 
@@ -319,5 +320,19 @@ class GroupBuilderAjax {
         $response['group_builder_response'] = $updated_lists;
 
         return $response;
+    }
+
+    public function delete_event_callback() {
+        if (!current_user_can('edit_posts')) {
+            wp_send_json_error();
+        }
+
+        $event_id = intval($_POST['event_id']);
+        if (get_post_type($event_id) == 'event_post') {
+            wp_delete_post($event_id, true);
+            wp_send_json_success();
+        } else {
+            wp_send_json_error();
+        }
     }
 }

@@ -620,6 +620,16 @@ a.ct-menu-link {
     grid-template-columns: 1fr 1fr;
     margin-bottom: 30px;
     font-size: 16px;
+    position: relative;
+}
+.event-entry .delete-event {
+    position: absolute;
+    right: 20px;
+    z-index: 2;
+}
+.event-entry .delete-event .dashicons-trash {
+    color: var(--darkgray);
+    font-size: 16px;
 }
 .event-entry.member-event {
     background-image: linear-gradient(90deg,  var(--background2) 40%, var(--akcent));
@@ -642,14 +652,14 @@ a.ct-menu-link {
     color: var(--akcent);
 }
 .event-entry .dashicons {
-    font-size: 58px;
+    font-size: 38px;
     /*color: var(--buttoncolor);*/
 }
 .event-entry .date{
     font-size: 28px;
     font-weight: bold;
     line-height: 25px;
-    letter-spacing: 0.1em;
+    /*letter-spacing: 0.1em;*/
 }
 .event-entry .weekday{
     font-size: 20px;
@@ -662,6 +672,10 @@ a.ct-menu-link {
 .event-entry .event-title{
     font-weight: bold;
 }
+.event-entry.my-group-event {
+    color: teal;
+}
+
 .event-entry .time{
     /*font-weight: bold;*/
 }
