@@ -201,7 +201,7 @@ trait GroupBuilderHelperTrait {
 
             $members = get_post_meta($post_id, '_group_members', true);
             $max_members = get_option('options_group_builder_max_members', 4);
-            if(count($members) <= $max_members){
+            if(count($members) < $max_members){
                 $slots_free = true;
             }
             if($join_option){
