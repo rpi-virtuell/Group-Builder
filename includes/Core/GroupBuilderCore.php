@@ -48,7 +48,7 @@ class GroupBuilderCore {
     public function enqueue_scripts() {
         if(is_singular('group_post')) {
             $members = get_post_meta(get_the_ID(), '_group_members', true);
-            $is_member = in_array(get_current_user_id(), $members);
+            $is_member = in_array(get_current_user_id(), $members)?'yes':'no';
         }
         wp_enqueue_script('group-builder-js', plugin_dir_url(__FILE__) . '../../js/group-builder.js', array('jquery'), '1.0', true);
         wp_enqueue_style('group-builder-css', plugin_dir_url(__FILE__) . '../../css/colors.css');

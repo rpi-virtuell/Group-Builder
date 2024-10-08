@@ -287,7 +287,7 @@ jQuery(document).ready(function($) {
         });
     });
 
-    if(group_builder_group.is_member==='no'){
+    if(group_builder_group.is_member!=='yes'){
         $('#comments').remove();
     }
 });
