@@ -16,7 +16,7 @@ class GroupBuilderIntegrations {
     }
 
     public function filter_comments_by_post_type($query) {
-        if (!is_admin()) {
+        if (!is_admin() && !is_singular('group_post')) {
             $post_types = array('pinwall_post', 'post', 'document_post'); // Hier die gewünschten Post-Types eintragen
             $query->query_vars['post_type'] = $post_types;
         }
