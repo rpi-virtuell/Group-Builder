@@ -1,8 +1,10 @@
 <?php
 namespace GroupBuilder\Color;
+use GroupBuilder\Traits\GroupBuilderHelperTrait;
 
 class GroupBuilderColor
 {
+    use GroupBuilderHelperTrait;
 
     public function __construct() {
 
@@ -16,6 +18,12 @@ class GroupBuilderColor
         if($post_type==='pinwall_post') {
             $class = $this->get_post_it_class($post_id);
             array_push($classes, $class);
+        }
+        if($post_type==='group_post') {
+            if($this->is_member($post_id)) {
+                $class = 'my-group';
+                array_push($classes, $class);
+            }
         }
         return $classes;
     }

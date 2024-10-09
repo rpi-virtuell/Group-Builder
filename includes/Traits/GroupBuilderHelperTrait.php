@@ -147,13 +147,13 @@ trait GroupBuilderHelperTrait {
                 $interested_users = array();
             }
             if (in_array($current_user_id, $interested_users)) {
-                $buttons .= sprintf($button_template, 'withdraw-interest', $post_id, 'Mein Interesse zurückziehen', $leave_svg,);
+                $buttons .= sprintf($button_template, 'withdraw-interest', $post_id, 'Mein Interesse zurückziehen', $leave_svg);
 
                 if (count($interested_users) >= get_option('options_group_builder_min_members', 2)) {
                     $create_button = sprintf($button2_template, 'create-group', $post_id, 'Gruppe gründen');
                 }
             } else {
-                $buttons .= sprintf($button_template, 'show-interest', $post_id, 'Interesse zeigen', $join_svg,);
+                $buttons .= sprintf($button_template, 'show-interest', $post_id, 'Interesse zeigen', $join_svg);
             }
         } elseif ($group_id) {
             $members = get_post_meta($group_id, '_group_members', true);
@@ -180,6 +180,17 @@ trait GroupBuilderHelperTrait {
 
         return [$buttons, $create_button];
     }
+    public function is_member($group_id = null, $user_id=null) {
+        if(!$user_id){
+            $user_id = get_current_user_id();
+        }
+        if(!$group_id){
+            $group_id = get_the_ID();
+        }
+        $members = get_post_meta($group_id, '_group_members', true);
+        return is_array($members) && in_array($user_id, $members);
+    }
+
 
     public function group_builder_user_can($post_id = null, $action = 'edit') {
         if(is_singular('pinwall_post')){
