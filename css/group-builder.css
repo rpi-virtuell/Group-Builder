@@ -610,6 +610,88 @@ a.ct-menu-link {
 }
 
 /** Termine **/
+
+
+.event-card{
+ position: relative;
+    border: 1px solid black;
+    --button-spacing: 50px;
+}
+.event-card-header{
+    background: darkblue;
+    color: white;
+    padding: 20px 0;
+}
+.event-card-day{
+    font-weight: bolder;
+    font-size: xx-large;
+}
+.event-card-weekday{
+    font-weight: lighter;
+font-size: large;
+}
+.event-card-header-subsection{
+    background: blue;
+
+}
+
+
+.event-card > .event-card-button {
+    --i: calc(1 + (var(--index, 0))); /* Dynamically calculate the index */
+}
+
+.event-card-button   {
+    position: absolute;
+    top: calc(var(--button-spacing) * (var(--i) - 1));
+    right: 16px;
+    display: flex;
+    align-items: center;
+    background: darkblue;
+    color: white;
+    padding: 8px 10px;
+    border-radius: 50px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+    transition: 0.35s ease all;
+    overflow: hidden;
+    max-width: 22px; /* icon size */
+}
+
+.event-card-button.delete-button{
+    background: darkred;
+}
+.event-card-button.meeting-button{
+    background: darkblue;
+}
+.event-card-button.embed-button{
+    background: purple;
+}
+
+.event-card-button-icon {
+    position: relative;
+    top: 1px;
+}
+
+.event-card-button-label {
+    text-transform: uppercase;
+    white-space: nowrap;
+    padding: 0 8px;
+    opacity: 0;
+    transform: translateX(10px);
+    transition: 0.25s ease all;
+}
+
+.event-card:hover {
+    .event-card-button {
+        max-width: 100%;
+    }
+    .event-card-button-label {
+        opacity: 1;
+        transform: translateX(0);
+        transition: 0.25s 0.1s ease-in opacity, 0.15s 0.1s cubic-bezier(.175, .885, .32, 1.275) transform;
+    }
+}
+
+
 .main-events-lists {
     max-height: 450px;
     overflow: auto;
@@ -618,7 +700,8 @@ a.ct-menu-link {
 .event-entry {
     display: block;
     grid-template-columns: 1fr 1fr;
-    margin-bottom: 30px;
+    margin: 15px 0;
+
     font-size: 16px;
 }
 .event-entry.member-event {
