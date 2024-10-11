@@ -254,11 +254,16 @@ trait GroupBuilderHelperTrait {
         $start_timestamp = strtotime($event_start_date);
         $end_timestamp = strtotime($event_end_date);
 
+        $name = bloginfo('name');
+        $blog_url = get_bloginfo('url');
+        $host = parse_url($blog_url, PHP_URL_HOST);
+        $admin_email = get_bloginfo('admin_email');
+
         $ical = "BEGIN:VCALENDAR
 VERSION:2.0
-PRODID:-//Your Company//Your Product//EN
+PRODID:-//-//$name//DE
 BEGIN:VEVENT
-UID:" . md5($event_id) . "@yourwebsite.com
+UID:" . md5($event_id) . "@$host
 DTSTAMP:" . gmdate('Ymd\THis\Z') . "
 DTSTART:" . gmdate('Ymd\THis\Z', $start_timestamp) . "
 DTEND:" . gmdate('Ymd\THis\Z', $end_timestamp) . "
@@ -271,25 +276,6 @@ END:VCALENDAR";
     }
 
 
-    public function send_message_to_group_member($group_id, $subject, $message) {
-        $group_members = get_post_meta($group_id, '_group_members', true);
-        if (!is_array($group_members)) {
-            return;
-        }
-        foreach ($group_members as $user_id) {
-            $message = array(
-                'message_title' => $subject,
-                'message_content'   =>  $message,
-                'message_to_id' => $user_id, //Receiver id
-            );
-
-            $message_id = fep_send_message( $message );
-
-            do_action('group_builder_send_message_to_group_member', $group_id, $subject, $message, $message_id);
-
-        }
-
-    }
 
     function get_german_weekday($date, $short = false) {
         $weekday_english = date('l', strtotime($date));

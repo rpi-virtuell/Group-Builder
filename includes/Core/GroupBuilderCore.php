@@ -40,6 +40,11 @@ class GroupBuilderCore {
         if (!wp_next_scheduled('group_builder_cleanup')) {
             wp_schedule_event(time(), 'daily', 'group_builder_cleanup');
         }
+        // Füge einen täglichen Cron-Job hinzu
+        if (!wp_next_scheduled('daily_event_notifications')) {
+            wp_schedule_event(time(), 'daily', 'daily_event_notifications');
+        }
+        add_action('daily_event_notifications', 'send_event_notifications');
 
 
     }
@@ -133,4 +138,114 @@ class GroupBuilderCore {
             delete_post_meta($post->ID, '_associated_group', $post_id);
         }
     }
+    public function send_message_to_group_post_member($group_id, $subject, $body) {
+        $group_members = get_post_meta($group_id, '_group_members', true);
+        if (!is_array($group_members)) {
+            return;
+        }
+
+        if( function_exists('fep_send_message') ){
+            try {
+                $author = get_user_by( 'login', 'kibot' );
+                if($author){
+                    $sender_id = $author->ID;
+                }else{
+                    $sender_id = $group_members[0];
+                }
+                $post = array(
+                    'mgs_title'	=> $subject,
+                    'mgs_content'	=> $body,
+                    'mgs_status'	=> 'publish',
+                    'mgs_parent'	=> 0,
+                    'mgs_type'		=> 'message',
+                    'mgs_author'	=> $sender_id,
+                    'mgs_created'	=> current_time( 'mysql', 1 ),
+                );
+                $post = wp_unslash( $post );
+                $new_message = new \FEP_Message;
+                $message_id = $new_message->insert( $post );
+                // Insert the message into the database
+                if ( ! $message_id  ) {
+                    return false;
+                }
+                $message['message_to_id'] = (array) $group_members;
+                //$message['message_to_id'][] = $new_message->mgs_author;
+                $new_message->insert_participants( $message['message_to_id'] );
+
+
+                fep_status_change( 'new', $new_message );
+
+            } catch (Exception $e) {
+                error_log($e->getMessage());
+            }
+
+
+            do_action('group_builder_send_message_to_group_member', $group_id, $subject, $message, $message_id);
+
+        }
+
+    }
+    public function send_event_notifications() {
+        // Hole alle Events, die morgen stattfinden
+        $tomorrow = date('Y-m-d', strtotime('+1 day'));
+        $args = array(
+            'post_type' => 'event_post',
+            'meta_query' => array(
+                array(
+                    'key' => 'event_start_date',
+                    'value' => $tomorrow,
+                    'compare' => '=',
+                    'type' => 'DATE'
+                )
+            )
+        );
+        $events = get_posts($args);
+
+        foreach ($events as $event) {
+            $event_id = $event->ID;
+            $event_title = get_post_meta($event_id, 'event_title', true);
+            $event_group_id = get_post_meta($event_id, 'event_group_id', true);
+            $event_url = get_post_meta($event_id, 'event_url', true);
+
+            if ($event_group_id) {
+                // Event ist gruppenspezifisch
+                $member_ids = group_post_member($event_group_id);
+                foreach ($member_ids as $user_id) {
+                    $message= get_option('options_remember_event_group_email');
+                    $message = str_replace('{event_title}', $event_title, $message);
+                    $message = str_replace('{event_url}', $event_url, $message);
+
+                    $blog_name = get_bloginfo('name');
+                    $subject = "[$blog_name] Erinnerung: {$event_title}";
+
+                    //Nutze die Message Funktion von Frontend PM
+                    $this->send_message_to_group_post_member($event_group_id, $subject, $message);
+                }
+            } else {
+
+                // Event ist für alle Benutzer
+                $users = get_users();
+                $to = [];
+                foreach ($users as $user) {
+                    $to[] = $user->user_email;
+                }
+                $to = implode(',', $to);
+                //Massenmails werden als BCC verschickt
+                $headers = ['Bcc: ' . $to];
+                $this->send_notification($to, $event_title, $event_url, $is_group_event = false, $headers);
+            }
+        }
+    }
+
+    private function send_notification($to, $event_title, $event_url, $is_group_event = false, $headers = []) {
+
+        $blog_name = get_bloginfo('name');
+        $subject = "[$blog_name] Erinnerung: {$event_title}";
+        $message= get_option('options_remember_event_email');
+        $message = str_replace('{event_title}', $event_title, $message);
+        $message = str_replace('{event_url}', $event_url, $message);
+
+        wp_mail($to, $subject, $message, $headers);
+    }
+
 }
