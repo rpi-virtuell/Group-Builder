@@ -44,7 +44,7 @@ class GroupBuilderCore {
         if (!wp_next_scheduled('daily_event_notifications')) {
             wp_schedule_event(time(), 'daily', 'daily_event_notifications');
         }
-        add_action('daily_event_notifications', 'send_event_notifications');
+        add_action('daily_event_notifications', [$this,'send_event_notifications']);
 
 
     }
