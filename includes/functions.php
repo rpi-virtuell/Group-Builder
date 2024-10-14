@@ -49,3 +49,18 @@ function group_post_member($group_post_id)
 function pinwall_post_member($pinwall_post_id){
     return get_post_meta($pinwall_post_id, '_interested_users', true);
 }
+
+function is_user_approved()
+{
+    if(is_user_logged_in()){
+        if(!get_option('options_set_new_user_pending', true)){
+            return true;
+        }
+
+        $user_id = get_current_user_id();
+        $status = get_user_meta($user_id, 'account_status', true);
+        return $status === 'approved';
+    }
+    return false;
+
+}

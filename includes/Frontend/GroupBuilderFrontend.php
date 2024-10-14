@@ -456,7 +456,7 @@ class GroupBuilderFrontend {
             $adminbar->add($parent_home, 'Mitglieder', '/netzwerk/');
             $adminbar->add($parent_home, 'Dokumente', '/dokument/');
             $adminbar->add($parent_home, 'Bedienungshilfen', '/faq/');
-        if (is_user_logged_in()) {
+        if (is_user_logged_in() && is_user_approved()) {
             $adminbar->add('', '+ Pinnwand-Karte', '/pinnwand-karte-erstellen/', 'dashicons-admin-post');
         }
         if (current_user_can('administrator')) {

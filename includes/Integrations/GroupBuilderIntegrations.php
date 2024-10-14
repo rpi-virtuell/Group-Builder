@@ -5,6 +5,31 @@ class GroupBuilderIntegrations {
     public function __construct() {
         $this->setup_integrations();
         add_filter('pre_get_comments', [$this,'filter_comments_by_post_type']);
+        add_action( 'user_register', [$this,'set_new_user_pending'] );
+    }
+
+    public function set_new_user_pending($user_id) {
+        if(!get_option('options_set_new_user_pending', true)){
+            return;
+        }
+        update_user_meta( $user_id, 'account_status', 'awaiting_admin_review');
+        // alle Admins benachrichtigen
+        $admin_emails = [];
+        $admins = get_users(['role' => 'administrator']);
+        foreach ($admins as $admin) {
+            $admin_emails[] = $admin->user_email;
+        }
+        $admin_emails = implode(',', $admin_emails);
+        $url = admin_url('users.php');
+
+        wp_mail($admin_emails, '['.get_bloginfo('name').'] Neue Benutzer:in registriert',
+            'Eine neue Benutzer:in hat sich registriert und wartet auf Freischaltung. Bitte überprüfe die Benutzer:in und schalte sie frei.'
+            ."\n"
+            .'Benutzername: '.get_userdata($user_id)->user_login
+            ."\n"
+            .'Zur Administrationsseite: '.$url
+        );
+
     }
 
     private function setup_integrations() {

@@ -2,7 +2,7 @@
 /*
 Plugin Name: Group-Builder
 Description: Ermöglicht Nutzern, Interesse an Beiträgen zu zeigen und Gruppen zu gründen.
-Version: 3.0.0
+Version: 3.0.1
 Author: Joachim Happel
 */
 
