@@ -53,7 +53,11 @@ class GroupBuilderCore {
     public function enqueue_scripts() {
         if(is_singular('group_post')) {
             $members = get_post_meta(get_the_ID(), '_group_members', true);
-            $is_member = in_array(get_current_user_id(), $members)?'yes':'no';
+            if(!empty($members)) {
+                $is_member = in_array(get_current_user_id(), $members)?'yes':'no';
+            }else{
+                $is_member = 'no';
+            }
         }else{
             $is_member = 'yes';
         }

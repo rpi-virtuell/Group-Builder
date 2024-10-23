@@ -13,7 +13,13 @@ function is_user_group_post_member($group_post_id)
     if (is_user_logged_in()) {
 
         $members = get_post_meta($group_post_id, '_group_members', true);
-        return in_array(get_current_user_id(), $members);
+        if($members){
+            return in_array(get_current_user_id(), $members);
+        }else{
+            return false;
+        }
+
+
 
     }
     return false;
@@ -28,7 +34,10 @@ function is_user_pinwall_post_member($pinwall_post_id)
     if (is_user_logged_in()) {
 
         $members = get_post_meta($pinwall_post_id, '_interested_users', true);
-        return in_array(get_current_user_id(), $members);
+        if($members){
+            return in_array(get_current_user_id(), $members);
+        }
+        return false;
 
     }
     return false;

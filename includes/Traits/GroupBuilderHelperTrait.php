@@ -52,6 +52,7 @@ trait GroupBuilderHelperTrait {
         $do_print_output = false;
         $has_groups = false;
         $output = '';
+        $assoziated_group_ids = null;
 
         $post_type = get_post_type($post_id);
         if($post_type !== 'group_post' && $post_type !== 'pinwall_post') {
