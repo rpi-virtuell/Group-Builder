@@ -214,10 +214,15 @@ trait GroupBuilderHelperTrait {
             $join_option = get_post_meta($post_id, '_join_option', true);
 
             $members = get_post_meta($post_id, '_group_members', true);
-            $max_members = get_option('options_group_builder_max_members', 4);
-            if(count($members) < $max_members){
+            if($members){
+                $max_members = get_option('options_group_builder_max_members', 4);
+                if(count($members) < $max_members){
+                    $slots_free = true;
+                }
+            }else{
                 $slots_free = true;
             }
+
             if($join_option){
                 $hash = get_post_meta($post_id, '_invite_hash', true);
                 $invite = get_user_meta($current_user_id, '_group_user_invite_code', true);

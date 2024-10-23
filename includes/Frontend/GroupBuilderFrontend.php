@@ -129,6 +129,9 @@ class GroupBuilderFrontend {
     }
 
     public function martrix_url_shortcode() {
+        if(!get_option('options_matrix_integration')){
+            return '';
+        }
         $matrix_url = get_option('options_matrix_plenum_url');
         $template = get_option('options_martrix-widget-content');
 
