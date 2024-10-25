@@ -624,6 +624,7 @@ a.ct-menu-link {
     margin-bottom: 30px;
     font-size: 16px;
     position: relative;
+    padding: 5px;
 }
 .event-entry .delete-event {
     position: absolute;
@@ -640,6 +641,7 @@ a.ct-menu-link {
 
 .event-entry.public-event {
     background-image: linear-gradient(90deg,  var(--background2) 40%, var(--lightskyblue));
+
 }
 
 .event-entry .date-row {
