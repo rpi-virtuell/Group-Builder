@@ -1113,44 +1113,7 @@ meet.rpi-virtuell.de',
                 ),
                 'allow_in_bindings' => 0,
             ),
-            array(
-                'key' => 'field_66ff026f23d43',
-                'label' => 'Zum Gruppenstart (kopieren)',
-                'name' => 'group_welcome_template_kopieren',
-                'aria-label' => '',
-                'type' => 'acfe_code_editor',
-                'instructions' => 'Plazhalter für ursprünglichen Pinwandbeitrag %pin%',
-                'required' => 0,
-                'conditional_logic' => 0,
-                'wrapper' => array(
-                    'width' => '',
-                    'class' => '',
-                    'id' => '',
-                ),
-                'default_value' => '<div class="group-goal">
-<h2>Get Started:</h2>
-<p><strong>Willkommen!</strong><br>Gerade wurde die Gruppe gegründet. Nun kommen die nächsten Schritte...</p>\' .
-<ul>\' .
-<li>Schritt 1: Einigt Euch auf ein gemeinsames Ziel</li>\' .
-<li>Schritt 2: Formuliert eure Aufgaben Herausforderungen (Vielleicht mit Hilfe der Pinnwand)</li>\' .
-<li>Schritt 3: Verabredet den nächsten Termin</li>\' .
-</ul>\' .
-<p>Nutzt das Etherpad als für Eure Dokumentation im Meetingraum. Wenn ihr euch auf einen Termin geeinigt habt, tragt in im Formular (+ Termin ein).</p>
-<p>Viel Erfolg beim ersten Treffen</p>
-<hr>
-<div>Ursprünglicher Inhalt an der Pinnwand: %pin%.\'</div>
-</div>',
-                'placeholder' => '',
-                'mode' => 'text/html',
-                'lines' => 1,
-                'indent_unit' => 4,
-                'maxlength' => '',
-                'rows' => 4,
-                'max_rows' => '',
-                'return_format' => array(
-                ),
-                'allow_in_bindings' => 0,
-            ),
+
             array(
                 'key' => 'field_66da22acc4021',
                 'label' => 'Konstituierendes Treffen',

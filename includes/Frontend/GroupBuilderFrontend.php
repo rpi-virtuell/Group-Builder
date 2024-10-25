@@ -73,7 +73,7 @@ class GroupBuilderFrontend {
     }
     public function preset_event_title_value($value, $post_id, $field) {
         if(is_singular('group_post')){
-            $value = 'Meeting der Gruppe "'.get_the_title().'"';
+            $value = ''.get_the_title().'';
         }
         return $value;
 
@@ -199,15 +199,16 @@ class GroupBuilderFrontend {
             while ($query->have_posts()) {
                 $query->the_post();
 
-                $event_title = get_field('event_title');
-                $event_url = get_field('event_url');
+
+                $event_title = get_post_meta($post->ID ,'event_title', true);
+                $event_url = get_post_meta($post->ID ,'event_url', true);
+                $visible = get_post_meta($post->ID ,'event_visibility', true);
+                $event_group_id = get_post_meta($post->ID ,'event_group_id', true);
+
                 $event_start_date = get_field('event_start_date');
                 $event_end_date = get_field('event_end_date');
-                $event_group_id = get_field('event_group_id');
-                $visible = get_field('event_visibility');
+
                 $show_event_link = false;
-
-
 
                 //Zeitzone und Locale setzen
                 setlocale(LC_TIME, 'de_DE');
@@ -330,18 +331,19 @@ class GroupBuilderFrontend {
             if($goal){
                 echo '<div class="group-goal"><h2>Unser Ziel:</h2><p>'.$goal.'</p><h2>Herausforderungen und Schwerpunkte:</h2></div>';
             }else{
-                $pin_id = get_post_meta(get_the_ID(), '_pinwall_post', true);
-                $post = get_post($pin_id);
-                $content = $post->post_content;
+                $content = get_the_content();
                 $template = get_option('options_group_welcome_template');
-                if($template){
+
+                if(empty($content) && $template) {
+                    $pin_id = get_post_meta(get_the_ID(), '_pinwall_post', true);
+                    $post = get_post($pin_id);
+                    $content = $post->post_content;
                     $template = str_replace('%pin%', $content, $template);
+                }else{
+                    $template = str_replace('%pin%', '', $template);
                 }
+
                 echo $template;
-
-
-
-
             }
 
         }
