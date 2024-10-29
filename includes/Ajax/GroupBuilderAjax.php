@@ -199,10 +199,8 @@ class GroupBuilderAjax {
                     $post_id = get_the_ID();
                     $this->update_change_timestamp($post_id);
                     wp_reset_postdata();
-                    wp_send_json_success(array('post_id' => $post_id));
-                } else {
-                    wp_send_json_error('Zugehöriger pinwall_post nicht gefunden');
                 }
+                wp_send_json_success(array('post_id' => $post_id));
             } else {
                 wp_send_json_error('Die Gruppe hat die maximale Anzahl an Mitgliedern erreicht');
             }
