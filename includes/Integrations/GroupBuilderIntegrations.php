@@ -6,6 +6,28 @@ class GroupBuilderIntegrations {
         $this->setup_integrations();
         add_filter('pre_get_comments', [$this,'filter_comments_by_post_type']);
         add_action( 'user_register', [$this,'set_new_user_pending'] );
+
+        // Weiterleitung zur Video-Konferenz
+        // wird dieser Hack wirklich benötigt?
+        add_action('template_redirect', function() {
+            // Prüfen, ob die aktuelle URL /zur_video_konferenz ist
+            // Allgemeine Video-Konferenz Weiterleitung aus den Optionen generieren
+            //@todo: Optionen für spezifische Weiterleitungen erweitern, statt Hardcoding
+            if (is_page('zur_video_konferenz')) {
+                // Prüfen, ob der Benutzer eingeloggt ist
+                if (is_user_logged_in()) {
+                    // Weiterleitung zur Zoom-Konferenz-URL
+                    $url = get_option('options_videoconference_default_url');
+                    wp_redirect($url);
+                    exit;
+                } else {
+                    // Weiterleitung zur Login-Seite
+                    wp_redirect(wp_login_url(get_permalink()));
+                    exit;
+                }
+            }
+        });
+
     }
 
     public function set_new_user_pending($user_id) {
