@@ -213,8 +213,8 @@ class GroupBuilderCore {
 
             if ($event_group_id) {
                 // Event ist gruppenspezifisch
-                $member_ids = group_post_member($event_group_id);
-                foreach ($member_ids as $user_id) {
+//                $member_ids = group_post_member($event_group_id);
+//                foreach ($member_ids as $user_id) {
                     $message= get_option('options_remember_event_group_email');
                     $message = str_replace('{event_title}', $event_title, $message);
                     $message = str_replace('{event_url}', $event_url, $message);
@@ -224,7 +224,7 @@ class GroupBuilderCore {
 
                     //Nutze die Message Funktion von Frontend PM
                     $this->send_message_to_group_post_member($event_group_id, $subject, $message);
-                }
+//                }
             } else {
 
                 // Event ist für alle Benutzer
